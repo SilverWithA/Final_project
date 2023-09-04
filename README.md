@@ -4,11 +4,11 @@ web project
 
 ## 기술스택
 - confluence, jira(예정), slack, notion, github
+  
 <div align="center">
 	<img src="https://img.shields.io/badge/Spring Boot-6DB33F?style=flat&logo=Spring&logoColor=white"/>
  	<img src="https://img.shields.io/badge/GitHub-181717?style=flat&logo=GitHub&logoColor=white"/>
- 	<img src="https://img.shields.io/badge/PyCharm-000000?style=flat&logo=PyCharmg&logoColor=white"/>
-	
+ 	<img src="https://img.shields.io/badge/PyCharm-000000?style=flat&logo=PyCharmg&logoColor=white"/>	
 </div>
 
 
