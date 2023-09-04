@@ -12,6 +12,11 @@ web project
 </div>
 
 
+# 사용언어 및 기여도
+
+<img src="https://github-readme-stats.vercel.app/api/top-langs/?username=SilverWithA&layout=compact"><br><br>
+<img src="https://github-readme-stats.vercel.app/api?username=SilverWithA&show_icons=true">
+
 
 
 ### README 단장 참고 사이트
