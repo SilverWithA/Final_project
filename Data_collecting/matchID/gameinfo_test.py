@@ -58,7 +58,7 @@ api_key = "RGAPI-96d4602c-940f-4bd3-b2dd-f6f6f7726996"
 columns_list= list(Aram_table.columns)
 
 # 각 matchID 따른 게임 정보 불러오기
-for i in range(5000):
+for i in range(5000,len(match_list)):
     match_url = "https://asia.api.riotgames.com/lol/match/v5/matches/" + match_list[i] + "?api_key=" + api_key
     r = requests.get(match_url)
     print(i,"번째 match정보를 불러왔습니다.", match_list[i])
@@ -177,10 +177,11 @@ for i in range(5000):
 
 
 
-Rank_winner.to_csv("Rank_winner_em1.csv", index=False, encoding="utf-8-sig")
-Rank_loser.to_csv("Rank_loser_em1.csv", index=False, encoding="utf-8-sig")
-Aram_table.to_csv("Aram_table_em1.csv", index=False, encoding="utf-8-sig")
+Rank_winner.to_csv("Rank_winner_em2.csv", index=False, encoding="utf-8-sig")
+Rank_loser.to_csv("Rank_loser_em2.csv", index=False, encoding="utf-8-sig")
+Aram_table.to_csv("Aram_table_em2.csv", index=False, encoding="utf-8-sig")
 print(" 16400개의 정보 중 5000개의 정보를 저장했습니다.")
+
 
 
 
