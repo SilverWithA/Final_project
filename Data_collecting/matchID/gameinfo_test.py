@@ -4,7 +4,6 @@ import time
 import json
 
 # (1) ERD에 따라 테이블 만들기: table_maker
-
 def table_maker(table_cnt):
     talbe_frames = []
     for i in range(table_cnt):
@@ -32,15 +31,17 @@ Aram_table,Rank_loser,Rank_winner = table_maker(3)
 
 
 # (2) MatchID 불러오기 -------------------------------------------------------
-matchID_chall = pd.read_csv("matchID_chall.csv", encoding="utf-8-sig")
+matchID_chall = pd.read_csv("matchID_em1.csv", encoding="utf-8-sig")
 match_list = list(matchID_chall['MatchId'])
 
-matchID_grand = pd.read_csv("matchID_grand.csv", encoding="utf-8-sig")
+matchID_grand = pd.read_csv("matchID_em2.csv", encoding="utf-8-sig")
 match_list += list(matchID_grand['MatchId'])
 
-matchID_mast = pd.read_csv("matchID_mast.csv", encoding="utf-8-sig")
+matchID_mast = pd.read_csv("matchID_em3.csv", encoding="utf-8-sig")
 match_list += list(matchID_mast['MatchId'])
 
+matchID_mast = pd.read_csv("matchID_em4.csv", encoding="utf-8-sig")
+match_list += list(matchID_mast['MatchId'])
 
 print("전체 matchID의 개수: ", len(match_list))
 match_list = set(match_list)
@@ -57,10 +58,10 @@ api_key = "RGAPI-96d4602c-940f-4bd3-b2dd-f6f6f7726996"
 columns_list= list(Aram_table.columns)
 
 # 각 matchID 따른 게임 정보 불러오기
-for i in range(len(matchID_chall)):
-    match_url = "https://asia.api.riotgames.com/lol/match/v5/matches/" + matchID_chall['MatchId'][i] + "?api_key=" + api_key
+for i in range(5000):
+    match_url = "https://asia.api.riotgames.com/lol/match/v5/matches/" + match_list[i] + "?api_key=" + api_key
     r = requests.get(match_url)
-    print(i,"번째 match정보를 불러왔습니다.", matchID_chall['MatchId'][i])
+    print(i,"번째 match정보를 불러왔습니다.", match_list[i])
     # print(matchID_chall['MatchId'][i],"에 대한 전체 정보: ", r.json())
 
     if 'status' in r.json():
@@ -70,7 +71,7 @@ for i in range(len(matchID_chall)):
             print("2분 쉬어갑니다.")
             time.sleep(120)
             r = requests.get(match_url)
-            print(i, "번째 데이터를 다시 가져오고 있습니다.: ", r.json())
+            print(i, "번째 데이터를 다시 가져오고 있습니다.: ", match_list[i])
 
         else:
             continue
@@ -93,88 +94,93 @@ for i in range(len(matchID_chall)):
 
         # 해당 게임에 참가한 참가자 수에 따라 정보 모아서 컬럼 순서(idx)대로 리스트에 쌓기
         for idx in range(len(columns_list)):
+            try:
+                column = columns_list[idx]
 
-            column = columns_list[idx]
-            if str(column) == 'matchId':
-                data = r.json()['metadata'][columns_list[idx]]
+                if str(column) == 'matchId':
+                    data = r.json()['metadata'][columns_list[idx]]
 
-            elif str(column) == 'gameDuration' or str(column) == 'gameMode':
-                data = r.json()["info"][str(column)]
+                elif str(column) == 'gameDuration' or str(column) == 'gameMode':
+                    data = r.json()["info"][str(column)]
 
-            elif str(column) in  ["defense","flex","offense"]:
-                data = data_parti[i]['perks']["statPerks"][str(column)]
+                elif str(column) in  ["defense","flex","offense"]:
+                    data = data_parti[i]['perks']["statPerks"][str(column)]
 
-            elif str(column) == 'prim1_perk':
-                # primstlye
-                for j in range(4):
-                    prim_perk = data_parti[i]['perks']['styles'][0]['selections'][j]['perk']
-                    prim_var1 = data_parti[i]['perks']['styles'][0]['selections'][j]['var1']
-                    prim_var2 = data_parti[i]['perks']['styles'][0]['selections'][j]['var2']
-                    prim_var3 = data_parti[i]['perks']['styles'][0]['selections'][j]['var3']
-                    prim_st = data_parti[i]['perks']['styles'][0]['style']
+                elif str(column) == 'prim1_perk':
+                    # primstlye
+                    for j in range(4):
+                        prim_perk = data_parti[i]['perks']['styles'][0]['selections'][j]['perk']
+                        prim_var1 = data_parti[i]['perks']['styles'][0]['selections'][j]['var1']
+                        prim_var2 = data_parti[i]['perks']['styles'][0]['selections'][j]['var2']
+                        prim_var3 = data_parti[i]['perks']['styles'][0]['selections'][j]['var3']
+                        prim_st = data_parti[i]['perks']['styles'][0]['style']
 
-                    usrplay_info[idx+(4*j)+0] = prim_perk
-                    usrplay_info[idx+(4*j)+1] = prim_var1
-                    usrplay_info[idx+(4*j)+2] = prim_var2
-                    usrplay_info[idx+(4*j)+3] = prim_var3
+                        usrplay_info[idx+(4*j)+0] = prim_perk
+                        usrplay_info[idx+(4*j)+1] = prim_var1
+                        usrplay_info[idx+(4*j)+2] = prim_var2
+                        usrplay_info[idx+(4*j)+3] = prim_var3
 
-                    usrplay_info[idx+16] = prim_st
-
-
-
-                # substlye
-                for j in range(2):
-                    sub_perk = data_parti[i]['perks']['styles'][1]['selections'][j]['perk']
-                    sub_var1 = data_parti[i]['perks']['styles'][1]['selections'][j]['var1']
-                    sub_var2 = data_parti[i]['perks']['styles'][1]['selections'][j]['var2']
-                    sub_var3 = data_parti[i]['perks']['styles'][1]['selections'][j]['var3']
-                    sub_st = data_parti[i]['perks']['styles'][1]['style']
-
-                    usrplay_info[idx + (4*j)+17] = sub_perk
-                    usrplay_info[idx + (4*j)+18] = sub_var1
-                    usrplay_info[idx + (4*j)+19] = sub_var2
-                    usrplay_info[idx + (4*j)+20] = sub_var3
-                    usrplay_info[idx + 25] = sub_st
+                        usrplay_info[idx+16] = prim_st
 
 
 
-            elif str(column) in pass_columns:
+                    # substlye
+                    for j in range(2):
+                        sub_perk = data_parti[i]['perks']['styles'][1]['selections'][j]['perk']
+                        sub_var1 = data_parti[i]['perks']['styles'][1]['selections'][j]['var1']
+                        sub_var2 = data_parti[i]['perks']['styles'][1]['selections'][j]['var2']
+                        sub_var3 = data_parti[i]['perks']['styles'][1]['selections'][j]['var3']
+                        sub_st = data_parti[i]['perks']['styles'][1]['style']
+
+                        usrplay_info[idx + (4*j)+17] = sub_perk
+                        usrplay_info[idx + (4*j)+18] = sub_var1
+                        usrplay_info[idx + (4*j)+19] = sub_var2
+                        usrplay_info[idx + (4*j)+20] = sub_var3
+                        usrplay_info[idx + 25] = sub_st
+
+                elif str(column) in pass_columns:
+                    continue
+
+                else:
+                    data = data_parti[i][str(column)]
+
+
+                if idx != 30:
+                    usrplay_info[idx] = data
+
+            except:
                 continue
-
-            else:
-                data = data_parti[i][str(column)]
-
-            if idx != 30:
-                usrplay_info[idx] = data
 
         # print("쌓은 참가자의 정보: ", usrplay_info)
         # print("쌓아야할 컬럼의 길이: ", len(usrplay_info))
         # print("쌓인 정보의 길이: ", len(columns_list))
 
     # usrplay_info를 알맞는 table에 쌓아주기
-        if r.json()['info']['gameMode'] == 'ARAM':
-            n = len(Aram_table)
-            Aram_table.loc[n] = usrplay_info
+        try:
+            if r.json()['info']['gameMode'] == 'ARAM':
+                n = len(Aram_table)
+                Aram_table.loc[n] = usrplay_info
             # print(Aram_table)
 
-        elif data_parti[i]['win'] == True:
-            n = len(Rank_winner)
-            Rank_winner.loc[n] = usrplay_info
-            # print(Rank_winner)
+            elif data_parti[i]['win'] == True:
+                n = len(Rank_winner)
+                Rank_winner.loc[n] = usrplay_info
+                # print(Rank_winner)
 
-        else:
-            n = len(Rank_loser)
-            Rank_loser.loc[n] = usrplay_info
-            # print(Rank_loser)
+            else:
+                n = len(Rank_loser)
+                Rank_loser.loc[n] = usrplay_info
+                # print(Rank_loser)
+        except:
+            pass
 
 
 
 
-Rank_winner.to_csv("Rank_winner.csv", index=False, encoding="utf-8-sig")
-Rank_loser.to_csv("Rank_loser.csv", index=False, encoding="utf-8-sig")
-Aram_table.to_csv("Aram_table.csv", index=False, encoding="utf-8-sig")
-print("모든 정보를 저장했습니다.")
-
+Rank_winner.to_csv("Rank_winner_em1.csv", index=False, encoding="utf-8-sig")
+Rank_loser.to_csv("Rank_loser_em1.csv", index=False, encoding="utf-8-sig")
+Aram_table.to_csv("Aram_table_em1.csv", index=False, encoding="utf-8-sig")
+print(" 16400개의 정보 중 5000개의 정보를 저장했습니다.")
 
 
 
