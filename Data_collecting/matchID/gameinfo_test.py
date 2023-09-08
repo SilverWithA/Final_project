@@ -31,22 +31,24 @@ Aram_table,Rank_loser,Rank_winner = table_maker(3)
 
 
 # (2) MatchID 불러오기 -------------------------------------------------------
-matchID_chall = pd.read_csv("matchID_em1.csv", encoding="utf-8-sig")
+matchID_chall = pd.read_csv("matchID_bro1.csv", encoding="utf-8-sig")
 match_list = list(matchID_chall['MatchId'])
 
-matchID_grand = pd.read_csv("matchID_em2.csv", encoding="utf-8-sig")
+matchID_grand = pd.read_csv("matchID_bro2.csv", encoding="utf-8-sig")
 match_list += list(matchID_grand['MatchId'])
 
-matchID_mast = pd.read_csv("matchID_em3.csv", encoding="utf-8-sig")
+matchID_mast = pd.read_csv("matchID_bro3.csv", encoding="utf-8-sig")
 match_list += list(matchID_mast['MatchId'])
 
-matchID_mast = pd.read_csv("matchID_em4.csv", encoding="utf-8-sig")
+matchID_mast = pd.read_csv("matchID_bro4.csv", encoding="utf-8-sig")
 match_list += list(matchID_mast['MatchId'])
 
 print("전체 matchID의 개수: ", len(match_list))
 match_list = set(match_list)
 match_list = list(match_list)
 print("전체 matchID의 개수: ", len(match_list))
+
+print("전체 데이터 저장하는 소요 시간은 약 ", len(match_list) //100 * 3//60,"시간 입니다.")
 
 
 
@@ -57,8 +59,8 @@ print("전체 matchID의 개수: ", len(match_list))
 api_key = "RGAPI-96d4602c-940f-4bd3-b2dd-f6f6f7726996"
 columns_list= list(Aram_table.columns)
 
-# 각 matchID 따른 게임 정보 불러오기
-for i in range(5000,len(match_list)):
+# 각 matchID 따른 게임 정보 불러오기`
+for i in range(15000):
     match_url = "https://asia.api.riotgames.com/lol/match/v5/matches/" + match_list[i] + "?api_key=" + api_key
     r = requests.get(match_url)
     print(i,"번째 match정보를 불러왔습니다.", match_list[i])
@@ -177,10 +179,10 @@ for i in range(5000,len(match_list)):
 
 
 
-Rank_winner.to_csv("Rank_winner_em2.csv", index=False, encoding="utf-8-sig")
-Rank_loser.to_csv("Rank_loser_em2.csv", index=False, encoding="utf-8-sig")
-Aram_table.to_csv("Aram_table_em2.csv", index=False, encoding="utf-8-sig")
-print(" 16400개의 정보 중 5000개의 정보를 저장했습니다.")
+Rank_winner.to_csv("Rank_winner_bro1.csv", index=False, encoding="utf-8-sig")
+Rank_loser.to_csv("Rank_loser_bro1.csv", index=False, encoding="utf-8-sig")
+Aram_table.to_csv("Aram_table_bro1.csv", index=False, encoding="utf-8-sig")
+print("브론즈1 (15000까지의) 데이터를 모두 저장했습니다.")
 
 
 
