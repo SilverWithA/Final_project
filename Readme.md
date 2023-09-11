@@ -1,9 +1,66 @@
-# <프로젝트 소개>
-
 ## 가제: lol 전적 사이트 프로젝트
 
-### contributor
-
+### Collaborator
+<h2>기여자 (Contributors) ✨</h2>
+<table>
+  <tr>
+    <td align="center">
+      <a href="https://github.com/SilverWithA">
+        <img src="https://avatars.githubusercontent.com/u/37844020?v=4"width="100px;" alt=""/>
+        <br />
+        <sub>
+          <b>Euna Jeong</b>
+        </sub>
+      </a>
+      <br />
+      <a href="https://github.com/beomki-kim" title="Code">🏠</a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/SilverWithA">
+        <img src="https://avatars.githubusercontent.com/u/92441328?v=4"width="100px;" alt=""/>
+        <br />
+        <sub>
+          <b>silver a</b>
+        </sub>
+      </a>
+      <br />
+      <a href="https://github.com/SilverWithA" title="Code">🏠</a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/kjjh714">
+        <img src="https://avatars.githubusercontent.com/u/59947483?v=4" width="100px;" alt=""/>
+        <br />
+        <sub>
+          <b>kjjh714</b>
+        </sub>
+      </a>
+      <br/>
+      <a href="https://github.com/kjjh714" title="Code">🏠</a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/Hoonscucci">
+        <img src="https://avatars.githubusercontent.com/u/132039559?v=4"width="100px;" alt=""/>
+        <br />
+        <sub>
+          <b>Hoonscucci</b>
+        </sub>
+      </a>
+      <br />
+      <a href="https://github.com/Hoonscucci" title="Code">🏠</a>
+    </td>
+    <td align="center">
+      <a href="https://github.com/lee-young-jik">
+        <img src="https://avatars.githubusercontent.com/u/91588673?v=4"width="100px;" alt=""/>
+        <br />
+        <sub>
+          <b>Young JIk LEE</b>
+        </sub>
+      </a>
+      <br />
+      <a href="https://github.com/lee-young-jik" title="Code">🏠</a>
+    </td>
+  </tr>
+</table>
 
 
 ### Skills
