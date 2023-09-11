@@ -26,7 +26,6 @@
       <br/>
       <a href="https://github.com/Hoonscucci" title="Code">🏠</a>
     </td>
-    
     <td align="center">
       <a href="https://github.com/chan9511">
         <img src="https://avatars.githubusercontent.com/u/131934006?v=4"width="100px;" alt=""/>
