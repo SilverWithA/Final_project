@@ -6,7 +6,7 @@
   <tr>
     <td align="center">
       <a href="https://github.com/SilverWithA">
-        <img src="https://avatars.githubusercontent.com/u/37844020?v=4"width="100px;" alt=""/>
+        <img src="https://avatars.githubusercontent.com/u/92441328?v=4"width="100px;" alt=""/>
         <br />
         <sub>
           <b>Euna Jeong</b>
@@ -15,7 +15,6 @@
       <br />
       <a href="https://github.com/SilverWithA" title="Code">🏠</a>
     </td>
-	  
     <td align="center">
       <a href="https://github.com/Hoonscucci">
         <img src="https://avatars.githubusercontent.com/u/132039559?v=4" width="100px;" alt=""/>
