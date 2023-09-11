@@ -27,6 +27,17 @@
       <a href="https://github.com/Hoonscucci" title="Code">🏠</a>
     </td>
     <td align="center">
+      <a href="https://github.com/Hoonscucci">
+        <img src="https://avatars.githubusercontent.com/u/132039559?v=4" width="100px;" alt=""/>
+        <br />
+        <sub>
+          <b>이상훈</b>
+        </sub>
+      </a>
+      <br/>
+      <a href="https://github.com/Hoonscucci" title="Code">🏠</a>
+    </td>
+    <td align="center">
       <a href="https://github.com/chan9511">
         <img src="https://avatars.githubusercontent.com/u/131934006?v=4"width="100px;" alt=""/>
         <br />
