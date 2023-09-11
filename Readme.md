@@ -13,51 +13,31 @@
         </sub>
       </a>
       <br />
-      <a href="https://github.com/beomki-kim" title="Code">🏠</a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/SilverWithA">
-        <img src="https://avatars.githubusercontent.com/u/92441328?v=4"width="100px;" alt=""/>
-        <br />
-        <sub>
-          <b>silver a</b>
-        </sub>
-      </a>
-      <br />
       <a href="https://github.com/SilverWithA" title="Code">🏠</a>
     </td>
+	  
     <td align="center">
-      <a href="https://github.com/kjjh714">
-        <img src="https://avatars.githubusercontent.com/u/59947483?v=4" width="100px;" alt=""/>
+      <a href="https://github.com/Hoonscucci">
+        <img src="https://avatars.githubusercontent.com/u/132039559?v=4" width="100px;" alt=""/>
         <br />
         <sub>
-          <b>kjjh714</b>
+          <b>이상훈</b>
         </sub>
       </a>
       <br/>
-      <a href="https://github.com/kjjh714" title="Code">🏠</a>
-    </td>
-    <td align="center">
-      <a href="https://github.com/Hoonscucci">
-        <img src="https://avatars.githubusercontent.com/u/132039559?v=4"width="100px;" alt=""/>
-        <br />
-        <sub>
-          <b>Hoonscucci</b>
-        </sub>
-      </a>
-      <br />
       <a href="https://github.com/Hoonscucci" title="Code">🏠</a>
     </td>
+    
     <td align="center">
-      <a href="https://github.com/lee-young-jik">
-        <img src="https://avatars.githubusercontent.com/u/91588673?v=4"width="100px;" alt=""/>
+      <a href="https://github.com/chan9511">
+        <img src="https://avatars.githubusercontent.com/u/131934006?v=4"width="100px;" alt=""/>
         <br />
         <sub>
-          <b>Young JIk LEE</b>
+          <b>chan9511</b>
         </sub>
       </a>
       <br />
-      <a href="https://github.com/lee-young-jik" title="Code">🏠</a>
+      <a href="https://github.com/chan9511" title="Code">🏠</a>
     </td>
   </tr>
 </table>
