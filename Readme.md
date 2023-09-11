@@ -2,7 +2,7 @@
 
 ### Collaborator
 <h2>기여자 (Contributors) ✨</h2>
-<table>
+<table align="center">
   <tr>
     <td align="center">
       <a href="https://github.com/SilverWithA">
