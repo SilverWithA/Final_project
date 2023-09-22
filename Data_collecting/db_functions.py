@@ -30,7 +30,6 @@ conn_gam = engine_gam.connect()
 # api_key = "RGAPI-96d4602c-940f-4bd3-b2dd-f6f6f7726996"
 
 
-
 # [1] 함수 정의하기
 # 1. DB에 았는 모든 테이블 조회 -> 테이블 이름 convert로 반환
 # show tables
@@ -38,7 +37,7 @@ def show_tables(engine_name):
     """연결하고자하는 DB의 engine 변수를 engine_name에 설정(ex.engine_mat,engine_gam) """
     with engine_name.begin() as connection:
         res = connection.execute(text("SHOW TABLES;"))
-    print(engine_name,"DB에 존재하는 모든 table를 조회합니다.")
+    print("DB에 존재하는 모든 table를 조회합니다.")
     tables = res.fetchall()
 
     # 인덱싱을 위해 2중 list로 변환
