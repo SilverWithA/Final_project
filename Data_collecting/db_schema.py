@@ -72,17 +72,19 @@ def create_gameinfo():
                                         'item4 varchar(255),'
                                         'item5 varchar(255),'
                                         'item6 varchar(255),'
+                                        
+        
     
-                                        'totalDamageDealtToChampions varchar(255),'
-                                        'totalDamageTaken varchar(255),'
+                                        'totalDamToCham varchar(255),'  # totalDamageDealtToChampions
+                                        'totalDamTaken varchar(255),'  # totalDamageTaken
     
     
                                         # 최대 100개 씩임
-                                        'totalMinionsKilled int(4),'
-                                        'totalEnemyJungleMinionsKilled int(4),'
-                                        'totalAllyJungleMinionsKilled int(4),'
+                                        'totalMinionsKilled int(4),'  # totalMinionsKilled
+                                        'totalEnemyJunKilled int(4),'  # totalEnemyJungleMinionsKilled
+                                        'totalAllyJunKilled int(4),'   # totalAllyJungleMinionsKilled
     
-                                        'detectorWardsPlaced int(4),'  # 최대 500
+                                        'detWardsPlaced int(4),'  # 최대 500  #detectorWardsPlaced
                                         'goldEarned int(6),'  # 최대 40000
     
                                         'bans varchar(255),'
