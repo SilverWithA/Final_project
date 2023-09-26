@@ -27,7 +27,7 @@ engine_gam = create_engine(GameInfo_str)
 conn_gam = engine_gam.connect()
 
 # 4. api키 설정
-# api_key = "RGAPI-96d4602c-940f-4bd3-b2dd-f6f6f7726996"
+# api_key = "RGAPI-82d303c3-356f-4cbe-83b6-6ac2ca16567c"
 
 
 # [1] 함수 정의하기

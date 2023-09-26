@@ -17,7 +17,8 @@ def create_usrinfo():
         with engine_Usr.begin() as connection:
             connection.execute(text('CREATE TABLE {}('
                                     'summnorName varchar(18) NOT NULL,'
-                                    'puuid varchar(255));'.format(table_name)))
+                                    'puuid varchar(255) NOT NULL;'))
+
 def create_matinfo():
     for i in range(len(tiers)):
         table_name = tiers[i]+"_mat"
@@ -87,8 +88,8 @@ def create_gameinfo():
                                         'detWardsPlaced int(4),'  # 최대 500  #detectorWardsPlaced
                                         'goldEarned int(6),'  # 최대 40000
     
-                                        'bans varchar(255),'
-                                        'timeCCingOthers int(5),'  # 최대 1000개
+                                        # 'bans varchar(255),'
+                                        'timeCCingOthers int(5),'  # 최대 1000개 
                                         
                                         'summoner1Id varchar(255),'
                                         'summoner2Id varchar(255),'
@@ -103,12 +104,12 @@ def create_gameinfo():
                                         'first_pur8 varchar(255),'
                                         
                                     
-                                        'slot_log varchar(255),'
-                                        'skill_tree varchar(255));'.format(table_name)))
+                                        'skill_slot varchar(255),'
+                                        'bans varchar(255));'.format(table_name)))
 
 
 
-create_usrinfo()
+# create_usrinfo()
 # create_matinfo()
-# create_gameinfo()
+create_gameinfo()
 conn_Usr.close()

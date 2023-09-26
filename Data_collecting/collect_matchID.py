@@ -30,7 +30,7 @@ def collect_matchID(select_df,lowCase_tier):
 
     print(lowCase_tier, "에서 조회할 유저는: ", len(select_df),"명 입니다=======================================")
 
-    for i in range(len(select_df)):
+    for i in range(5):  # len(select_df)
         match_url = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/" + select_df["puuid"][i] + "/ids?start=0&count=20&api_key=" + api_key
         r = requests.get(match_url)
         print(f"현재 {i}번째 puuid에 대한 matchID 20개를 불러왔습니다.")
@@ -71,7 +71,7 @@ def exe_collMatchId():
 
 
     UsrPerTier = show_tables(engine_Usr)   # MySQL usrinfo DB에 있는 모든 table 저장
-    for i in range(len(UsrPerTier)):
+    for i in range(len(UsrPerTier)):  # len(UsrPerTier)
 
         # MySQL DB에 저장된 table을 데이터 프레임으로 받아오기
         usr_df = select_db(UsrPerTier[i][0], conn_Usr)
