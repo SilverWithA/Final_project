@@ -2,38 +2,23 @@ import pandas as pd
 import time
 import requests
 
-from sqlalchemy import create_engine
-from sqlalchemy import text
-
 from db_functions import *
+from setting import *
 
-
-# 0. 기본 설정
-# (1) product api키 설정
-api_key = "RGAPI-82d303c3-356f-4cbe-83b6-6ac2ca16567c"
-
-
-# (2) MongoClient를 이용한 연결 기본 설정
-client = MongoClient('mongodb://localhost:27017/')
-
-# # 1. DB 연결
-# # (1) MongoDB - 사용할 db를 use_db  변수에 저장
-db_mat = client.mat_info   # 연결할 db 선택
-use_matcoll = db_mat.matchIds   # 연결할 때 마다 collection의 형태임 -- collection이 없으면 새로 만드는 구조
 
 
 # 3. API에서 matchID를 불러와 저장하는 함수
 def collect_matchID(select_df,lowCase_tier):
     """Riot API에서 puuid를 사용하여 matchID를 불러오는 함수"""
+    print(lowCase_tier,"의 정보를 수집합니다 =====================================")
 
     matchid_list = []
+    print(lowCase_tier, "에서 조회할 유저는: ", len(select_df),"명 입니다.")
 
-    print(lowCase_tier, "에서 조회할 유저는: ", len(select_df),"명 입니다=======================================")
-
-    for i in range(5):  # len(select_df)
+    for i in range(len(select_df)):  # len(select_df)
         match_url = "https://asia.api.riotgames.com/lol/match/v5/matches/by-puuid/" + select_df["puuid"][i] + "/ids?start=0&count=20&api_key=" + api_key
         r = requests.get(match_url)
-        print(f"현재 {i}번째 puuid에 대한 matchID 20개를 불러왔습니다.")
+        print(f"현재 {i}번째 정보를 불러왔습니다.")
 
 
         # api 키 리밋 걸렸을 때 2분 쉬기
@@ -66,11 +51,13 @@ def collect_matchID(select_df,lowCase_tier):
 
 
 # 4. 저장 과정 실행히줄 함수 정의
-def exe_collMatchId():
-    use_matcoll.drop()  # 콜렉션 비우기
+def exe_collMatchId(coll_mat):
+    coll_mat.drop()  # 콜렉션 비우기
+    print("matchIds의 콜렉션을 비웠습니다.")
 
 
     UsrPerTier = show_tables(engine_Usr)   # MySQL usrinfo DB에 있는 모든 table 저장
+    print(UsrPerTier)
     for i in range(len(UsrPerTier)):  # len(UsrPerTier)
 
         # MySQL DB에 저장된 table을 데이터 프레임으로 받아오기
@@ -82,20 +69,10 @@ def exe_collMatchId():
 
         # 조회한 matchID를 딕셔너리 형태(mat_doc)으로 만들어 MongoDB로 쏴준다
         # 티어별로 하난의 도큐먼트가 만들어지고 해당 티어의 경기코드가 전부 value값으로 들어간다
-        result = use_matcoll.insert_one(mat_doc)   # 콜랙션에 티어별 도큐먼트 insert
-        print("MongDB에 저장했습니다.")
+        result = coll_mat.insert_one(mat_doc)   # 콜랙션에 티어별 도큐먼트 insert
+        print(lowCase_tier,"가 MongDB에 저장됐습니다.")
 
-
-
-# 데이터 비우기
-# trun_tables(engine_mat)
-
-# matchID 수집 실행 함수
-# df = show_tables(engine_Usr)
-# print(df[1][0])
-# print(len(df[1][0]))
-
-exe_collMatchId()
+exe_collMatchId(coll_mat)
 
 
 

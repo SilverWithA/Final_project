@@ -1,40 +1,29 @@
 from db_functions import *
 from sqlalchemy import create_engine
 from sqlalchemy import text
+from setting import *
 
-
-tiers = ["chall","grand","mast",
-              "dia","em","pla",
-              "gold","sil","bro","iron"]
 
 def create_usrinfo():
     """usrinfo DB에 table 스키마 만들기"""
 
-    for i in range(len(tiers)):
+    for i in range(len(lowCase)):
 
-        table_name = tiers[i] + "_usrinfo"
-        print(table_name)
+        table_name = lowCase[i] + "_usrinfo"
         with engine_Usr.begin() as connection:
             connection.execute(text('CREATE TABLE {}('
-                                    'summnorName varchar(18) NOT NULL,'
-                                    'puuid varchar(255) NOT NULL;'))
+                                    'summonerName varchar(18) NOT NULL,'
+                                    'puuid varchar(255) NOT NULL);'.format(table_name)))
 
-def create_matinfo():
-    for i in range(len(tiers)):
-        table_name = tiers[i]+"_mat"
-        print(table_name)
-        with engine_mat.begin() as connection:
-            connection.execute(text('CREATE TABLE {}('
-                                    'matchID varchar(255) NOT NULL);'.format(table_name)))
 def create_gameinfo():
-    for i in range(len(tiers)):
+    for i in range(len(lowCase)):
         for j in range(3):
             if j == 0:
-                table_name= tiers[i] + "_Aram"
+                table_name= lowCase[i] + "_Aram"
             elif j == 1:
-                table_name = tiers[i] + "_win"
+                table_name = lowCase[i] + "_win"
             else:
-                table_name = tiers[i] + "_lose"
+                table_name = lowCase[i] + "_lose"
 
             with engine_gam.begin() as connection:
                 connection.execute(text('CREATE TABLE {} (matchID varchar(255) NOT NULL,'
@@ -107,9 +96,22 @@ def create_gameinfo():
                                         'skill_slot varchar(255),'
                                         'bans varchar(255));'.format(table_name)))
 
+def create_chaminfo():
+    for i in range(len(lowCase)):
+        table_name = lowCase[i]+"_cham"
+        print(table_name)
+        with engine_cham.begin() as connection:
+            connection.execute(text('CREATE TABLE {}('
+                                    'championName varchar(255) NOT NULL,'
+                                    'championId varchar(255) NOT NULL,'
+                                    'teamPosition varchar(255),'
+                                    'total_cnt int(10),'
+                                    'win_cnt float(10),'
+                                    'ban_cnt float(10),'
+                                    'pick_cnt float(10));'.format(table_name)))
 
 
-# create_usrinfo()
-# create_matinfo()
-create_gameinfo()
-conn_Usr.close()
+# create_chaminfo()
+# create_gameinfo()
+create_chaminfo()
+conn_cham.close()

@@ -3,27 +3,16 @@ import pandas as pd
 import time
 
 from pymongo import MongoClient
-
-
-# 0. 기본 설정
-# (1) api키 설정 - product키
-api_key = "RGAPI-82d303c3-356f-4cbe-83b6-6ac2ca16567c"
-
-# (2) MongoClient를 이용한 연결 기본 설정
-client = MongoClient('mongodb://localhost:27017/')
-
-# matchID를 불러올 DB 선택
-db_mat = client.mat_info    # 연결할 db 선택
-coll_mat = db_mat.matchIds   # 연결할 때 마다 collection의 형태임 -- collection이 없으면 새로 만드는 구조
-
-# 정보를 저장할 db 및 collections 확인
-db_raw = client.raw_info
-
+from setting import *
+from db_functions import *
 
 def call_api(lowCase_tier,mat_list):
-    print(lowCase_tier,"에서 조회할 matchid 개수는: ", len(mat_list), " ===============================")
+    cnt = tier_cnt[str(lowCase_tier)]
+    print(lowCase_tier, "에서 조회할 matchid 개수는: ", cnt,"=====================")
+    # print(lowCase_tier,"에서 조회할 matchid 개수는: ", len(mat_list), " ===============================")
     tier_list = []
-    for i in range(len(mat_list)):  # len(mat_list)
+    cnt = tier_cnt[str(lowCase_tier)]
+    for i in range(cnt):  # len(mat_list)
 
 
         match_url = "https://asia.api.riotgames.com/lol/match/v5/matches/" + mat_list[i] + "?api_key=" + api_key  # mat_cnt[i]
@@ -60,7 +49,6 @@ def call_api(lowCase_tier,mat_list):
 
 
 
-
 def exe_collApiinfo():
 
     # 모든 티어의 matchID 불러와 저장
@@ -79,8 +67,8 @@ def exe_collApiinfo():
 
 
 
-    for i in range(1):   # tier iterate   # len(key_names)
-        lowCase_tier = str(key_names[1])[:-4]  #  str(key_names[i])[:-4]
+    for i in range(len(key_names)):   # tier iterate   # len(key_names)
+        lowCase_tier = str(key_names[i])[:-4]  #  str(key_names[i])[:-4]
         print("lowCase_tier: ", lowCase_tier)        # tier에 해당하는 소문자
 
         # api_info에 저장할 collection 이름
@@ -110,7 +98,7 @@ def exe_collApiinfo():
         use_col.drop()         # 콜렉션 비우기
 
         # 조회할 때 사용할 티어별 모든 matchID 리스트에 저장하기
-        mat_list = list(tier_mat[1][str(key_names[1])])  # list(tier_mat[i][str(key_names[i])])
+        mat_list = list(tier_mat[i][str(key_names[i])])  # list(tier_mat[i][str(key_names[i])])
         # print(mat_list)
 
         # api 전체 데이터 불러오기
@@ -119,7 +107,7 @@ def exe_collApiinfo():
 
         # 각 collection에 insert 한꺼번에 하기
         use_col.insert_many(info_list)
-        print(str(lowCase_tier)+"_total collection에 데이터를 저장했습니다.")
+        print(lowCase_tier,"_total collection에 데이터를 저장했습니다.")
 
 exe_collApiinfo()
 

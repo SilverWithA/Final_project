@@ -1,6 +1,4 @@
-import requests
 import pandas as pd
-import time
 from pymongo import MongoClient
 from sqlalchemy import create_engine
 from sqlalchemy import text
@@ -10,24 +8,32 @@ from sqlalchemy import text
 
 
 # [0]. DB 연결 설정
-
+# MySQL ----------------------------------------------------------------
 # 1. usrinfo
 db_conn_Usr= 'mysql+pymysql://root:qwer1234@127.0.0.1/usrinfo'
 engine_Usr = create_engine(db_conn_Usr)
 conn_Usr = engine_Usr.connect()
 
-# 2. matchID
-db_conn_mat = 'mysql+pymysql://root:qwer1234@127.0.0.1/matchid'
-engine_mat = create_engine(db_conn_mat)
-conn_mat = engine_mat.connect()
-
-# 3. GameInfo DB 연결 설정
+# 2. GameInfo DB 연결 설정
 GameInfo_str= 'mysql+pymysql://root:qwer1234@127.0.0.1/gameinfo'
 engine_gam = create_engine(GameInfo_str)
 conn_gam = engine_gam.connect()
 
-# 4. api키 설정
-# api_key = "RGAPI-82d303c3-356f-4cbe-83b6-6ac2ca16567c"
+# 3. chaminfo DB 연결 설정
+ChamInfo_str= 'mysql+pymysql://root:qwer1234@127.0.0.1/chaminfo'
+engine_cham = create_engine(ChamInfo_str)
+conn_cham = engine_cham.connect()
+
+# MongoDB ----------------------------------------------------------------
+client = MongoClient('mongodb://localhost:27017/')
+
+# mat_info DB 연결 설정
+db_mat = client.mat_info
+coll_mat = db_mat.matchIds
+
+# raw_info DB 연결 설정
+db_raw = client.raw_info
+
 
 
 # [1] 함수 정의하기
@@ -37,7 +43,7 @@ def show_tables(engine_name):
     """연결하고자하는 DB의 engine 변수를 engine_name에 설정(ex.engine_mat,engine_gam) """
     with engine_name.begin() as connection:
         res = connection.execute(text("SHOW TABLES;"))
-    print("DB에 존재하는 모든 table를 조회합니다.")
+    # print("DB에 존재하는 모든 table를 조회합니다.")
     tables = res.fetchall()
 
     # 인덱싱을 위해 2중 list로 변환
