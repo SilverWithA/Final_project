@@ -92,26 +92,40 @@ def create_gameinfo():
                                         'first_pur7 varchar(255),'
                                         'first_pur8 varchar(255),'
                                         
-                                    
                                         'skill_slot varchar(255),'
-                                        'bans varchar(255));'.format(table_name)))
+                                        'bans varchar(255),'
+                                        
+                                        'core1 varchar(255),'
+                                        'core2 varchar(255),'
+                                        'core3 varchar(255),'
+                                        'core4 varchar(255),'
+                                        'core5 varchar(255),'
+                                        'core6 varchar(255),'
+                                        
+                                        'shoes varchar(255));'.format(table_name)))
 
 def create_chaminfo():
     for i in range(len(lowCase)):
-        table_name = lowCase[i]+"_cham"
-        print(table_name)
-        with engine_cham.begin() as connection:
-            connection.execute(text('CREATE TABLE {}('
-                                    'championName varchar(255) NOT NULL,'
-                                    'championId varchar(255) NOT NULL,'
-                                    'teamPosition varchar(255),'
-                                    'total_cnt int(10),'
-                                    'win_cnt float(10),'
-                                    'ban_cnt float(10),'
-                                    'pick_cnt float(10));'.format(table_name)))
+        for j in range(2):
+            if j == 0:
+                table_name = lowCase[i]+"_cham"
+            else:
+                table_name = lowCase[i] + "_archam"
+
+            with engine_cham.begin() as connection:
+                connection.execute(text('CREATE TABLE {}('
+                                        'tier varchar(255),'
+                                        'championName varchar(255) NOT NULL,'
+                                        'championId varchar(255) NOT NULL,'
+                                        'teamPosition varchar(255),'
+                                        'total_cnt int(10),'        # 전체 게임
+                                        'win_rate float(10),'       # 승률
+                                        'ban_rate float(10),'       # 벤률
+                                        'pick_rate float(10));'.format(table_name)))
 
 
-# create_chaminfo()
+
+# create_gameinfo()
 # create_gameinfo()
 create_chaminfo()
-conn_cham.close()
+conn_gam.close()

@@ -5,7 +5,7 @@ from pymongo import MongoClient
 from db_functions import *
 from setting import *
 
-
+# < raw_info에서 json을 받아서 정제된 dataframe으로 만들어서 MySQL에 넘기는 코드>
 def table_maker(table_cnt):
     table_frames = []
     for i in range(table_cnt):
@@ -25,9 +25,12 @@ def table_maker(table_cnt):
                                    "first_pur1","first_pur2","first_pur3","first_pur4",
                                    "first_pur5","first_pur6","first_pur7","first_pur8",
 
-                                   "skill_slot","bans"])
+                                   "skill_slot","bans",
+                                   "core1","core2","core3","core4","core5","core6","shoes"])
         table_frames.append(df)
     return table_frames
+
+
 def cal_first_pur(mat_timeline):
     """게임 유저의 첫 아이템 구매 항목을 수집하여 길이 8의 리스트로 반환
     아이템 8개를 사지 않았을 때 None값으로 채운다."""
@@ -43,6 +46,8 @@ def cal_first_pur(mat_timeline):
     return first_pur   # 참가자 넘버와 해시 값임
 def cal_skill_tree(mat_timeline):
     """한 게임에 대한 전체 유저의 skill_tree를 해시값으로 반환하는 함수"""
+
+
     frames = mat_timeline['info']['frames']
     skill_tree = {}
     for i in range(len(frames)):
@@ -108,6 +113,30 @@ def make_ban_list(mat_info):
 
             return ban_list
 
+def search_core_item(core_list,mat_timeline):
+    frames = mat_timeline['info']['frames']
+
+    build_core = {}
+    for i in range(len(frames)):  # events iterate
+        if frames[i]['events']:  # events가 존재하면
+            for event_num in range(len(frames[i]['events'])):  # events의 내부 iterate
+
+                each_event = frames[i]['events'][event_num]
+
+                # build_core에 참가자ID가 없으면 키값 생성해서 []로 값 저장
+                if each_event['type'] == "ITEM_PURCHASED" and each_event['itemId'] in core_list:
+
+                    if str(each_event['participantId']) not in build_core:
+                        build_core[str(each_event['participantId'])] = [each_event['itemId']]
+
+                    else:
+                        build_core[str(each_event['participantId'])].append(each_event['itemId'])
+
+
+    return build_core
+
+
+
 
 
 # make_ban_list 테스트하는 코드임 -------------------------------
@@ -115,12 +144,17 @@ def make_ban_list(mat_info):
 #
 # for raw_json in coll_raw.find():
 #     mat_info = raw_json['mat_info']
-#     pprint.pprint(mat_info['info']['teams'])
+#     p = mat_info['metadata']['matchId']
+#     print(p)
+#
+#
+#     mat_timeline = raw_json['mat_timeline']
+#     # pprint.pprint(mat_info['info']['teams'])
 #     print()
-#     bansinfo = make_ban_list(mat_info)
-#     pprint.pprint(bansinfo)
+#     build_core = search_core_item(core_list,mat_timeline)
+#     pprint.pprint(build_core)
 #     break
-# # --------------------------------------------------------------
+# --------------------------------------------------------------
 
 
 
@@ -131,7 +165,7 @@ def make_ban_list(mat_info):
 
 
 # mongoDB에서 matchId 정보가 있는 콜렉션 불러와서 - 전처리
-def coll_usrlog(coll_raw,lowCase):
+def coll_usrlog(coll_raw,lowCase,schema):
     Aram_table, Rank_loser, Rank_winner = table_maker(3)
 
     cnt = 0
@@ -142,10 +176,17 @@ def coll_usrlog(coll_raw,lowCase):
         # print("------------------------------------------")
         cnt += 1
         # pprint.pprint(raw_json['mat_timeline'])       # 해시로 불러와짐
+        pass_columns = ["first_pur2", "first_pur3", "first_pur4", "first_pur5", "first_pur6", "first_pur7",
+                        "first_pur8",
+                        "prim2_perk", "prim3_perk", "prim4_perk", "prim_style",
+                        "sub1_perk", "sub2_perk", "sub_style",
+                        "sub1_perk", "sub2_perk", "sub_style",
+                        "core2", "core3", "core4", "core5", "core6", "shoes"]
+
+        item_col = ["item0","item1","item2","item3","item4","item5","item6"]
+
 
         # 2. 데이터 전처리 및 분류해서 리스트로 저장 -> 최종 테이블 형식의 df로 반환
-
-
         mat_info = raw_json['mat_info']
         print(cnt, "번째 match정보를 가져왔습니다.", mat_info['metadata']['matchId'])
         mat_timeline = raw_json['mat_timeline']  # print(mat_info['info']['participants'][0])
@@ -162,6 +203,11 @@ def coll_usrlog(coll_raw,lowCase):
         bans_list = make_ban_list(mat_info)
         # print("ban_list: ",bans_list)
 
+        build_core = search_core_item(core_list, mat_timeline)
+        # print("build_core: ",build_core)
+
+
+
 
 
         for i in range(len(mat_info["metadata"]['participants'])):   # participants iterate
@@ -171,9 +217,9 @@ def coll_usrlog(coll_raw,lowCase):
             usrplay_info = [None] * len(columns_list)
             # print(data_parti[i])
 
-            pass_columns = ["first_pur2","first_pur3","first_pur4","first_pur5","first_pur6","first_pur7","first_pur8",
-                            "prim2_perk", "prim3_perk", "prim4_perk", "prim_style",
-                            "sub1_perk", "sub2_perk", "sub_style"]
+            item_list = []
+            use_shoes = []
+
             try:
                 parti_pur = pur_list[str(i+1)]
                 for _ in range((8 - len(parti_pur))):
@@ -243,6 +289,17 @@ def coll_usrlog(coll_raw,lowCase):
                             usrplay_info[idx] = bans_list.pop()
                         except:
                             continue
+                    elif str(column) == 'core1':
+                        if len(build_core[str(i+1)]) < 6:
+                            for x in range(6 - len(build_core[str(i+1)])):
+                                build_core[str(i + 1)].append(None)
+
+                        # i = participants number
+                        for core_num in range(6): # core iterate
+                            usrplay_info[idx + core_num] = build_core[str(i+1)][0+core_num]
+
+                    elif str(column) in item_col:
+                        item_list.append(data_parti[i][str(column)])
 
 
                     else:
@@ -255,6 +312,15 @@ def coll_usrlog(coll_raw,lowCase):
                     continue
 
 
+            # item0~ item6까지에 코드 중 shoew_list에 있는 코드가 있다면 shoes 컬럼에 넣기
+            # print("items:", usrplay_info[25:32])
+            for item in item_list:            # item iterate
+                if item in shoes_list:        # 어떤 item 이 신발 코드라면
+                    usrplay_info[58] = item
+
+
+
+
             # 데이터 저장하기
             try:
                 # print(cnt,"번째 경기 정보를 저장합니다.")
@@ -263,7 +329,7 @@ def coll_usrlog(coll_raw,lowCase):
                     Aram_table.loc[n] = usrplay_info
 
 
-                elif data_parti[i]['win'] == True:
+                elif data_parti[i]['win'] == 1:
                     n = len(Rank_winner)
                     Rank_winner.loc[n] = usrplay_info
 
@@ -273,7 +339,8 @@ def coll_usrlog(coll_raw,lowCase):
                     Rank_loser.loc[n] = usrplay_info
 
 
-            except:
+            except Exception as e:
+                print("불러온 usrinfo를 df 저장 실패", e)
                 pass
 
     print(lowCase,"의 최종 테이블 컬럼 개수는 다음과 같음 =============")
@@ -281,27 +348,23 @@ def coll_usrlog(coll_raw,lowCase):
     print("Rank_winner: ", len(Rank_winner))
     print("Rank_loser: ", len(Rank_loser))
 
-    Rank_winner.to_sql(name=str(lowCase+"_win"), con=conn_gam, if_exists='replace',index=False)
-    Rank_loser.to_sql(name=str(lowCase+"_lose"), con=conn_gam, if_exists='replace', index=False)
-    Aram_table.to_sql(name=str(lowCase+"_aram"), con=conn_gam, if_exists='replace', index=False)
+    Rank_winner.to_sql(name=str(lowCase+"_win"), con=conn_gam, if_exists='append',index=False)
+    Rank_loser.to_sql(name=str(lowCase+"_lose"), con=conn_gam, if_exists='append', index=False)
+    Aram_table.to_sql(name=str(lowCase+"_aram"), con=conn_gam, if_exists='append', index=False)
     print(lowCase,"데이터를 전처리하여 모두 저장하였습니다 =============")
 
 def exe_prepro_final():
 
     # gameinfo 에 있는 모든 table 데이터 초기화
     trun_tables(engine_gam)
+    fin_schema = select_db(table_name='chall_win', conn_name=conn_gam)
 
     # raw_coll와 lowCase는 setting.py에서 설정
     for i in range(len(raw_coll)):  # raw_info의 collections iterate  # len(raw_coll)
 
         print("전처리 할 티어는 ", lowCase[i], "입니다.===========================================")
         # coll_raw = 사용할 collection 지정/ # lowCase = 수집할 티어의 소문자
-        coll_usrlog(coll_raw=raw_coll[str(lowCase[i])], lowCase=lowCase[i])
+        coll_usrlog(coll_raw=raw_coll[str(lowCase[i])], lowCase=lowCase[i],schema = fin_schema)
 
 
 exe_prepro_final()
-
-
-
-
-

@@ -3,122 +3,192 @@ from setting import *
 from db_functions import *
 import pprint
 
-# MySQL에서 최종 테이블 불러오기
-final_tables =show_tables(engine_gam)
-# print(final_tables)
+final_tables = show_tables(engine_gam)
 
-chall_win = select_db(final_tables[5][0],conn_gam)
-# print("chall_win 길이: ",len(chall_win))
-# pprint.pprint(chall_win.head())
-chall_lose = select_db(final_tables[4][0],conn_gam)
-# pprint.pprint(chall_lose.tail())
-# print("chall_lose 길이: ", len(chall_lose))
+def all_calculation():
+    def cal_lune():
+        pass
+    def cal_spell():
+        pass
+    def cal_skilltree():
+        pass
+    def cal_item_build():
+        pass
+    def cal_shoes():
+        pass
+    def cal_corebuild():
+        pass
 
-
-# outer join 수행
-chall_classic = pd.merge(chall_win,chall_lose,how='outer')
-# pprint.pprint(chall_classic)
-# pprint.pprint(chall_classic.tail())
-# print("chall_classic 길이: ", len(chall_classic))
-
-# chall_classic.to_sql(name='chall_classic', con=conn_cham, if_exists='replace', index=False)
-# # pprint.pprint(chall_lose)
-# pprint.pprint(chall_lose.columns)
-
-posit_list = []
-chamName_list = []
-chamID_list = []
-chamID_hash = {}
-for i in range(len(chall_classic)):
-    if chall_classic['championName'][i] not in chamID_hash:
-        chamID_hash[str(chall_classic['championName'][i])] = chall_classic['championId'][i]
-
-    posit_list.append(chall_classic['teamPosition'][i])
-    chamName_list.append(chall_classic['championName'][i])
-    chamID_list.append(chall_classic['championId'][i])
+# iterate_perTier안에 들어가는 전처리 함수
+def collect_classic(lowCase,table,save_name):
+    """iterate_perTier()안에 들어가는 전처리 함수"""
+    posit_list = []
+    chamID_hash = {}
 
 
-# posit_list = list(set(posit_list))
-# print("중복 제거 한 팀포지션: ", list(set(posit_list)))
-# print("중복 제거 한 챔피언의 모든 이름: ", len(list(set(chamName_list))))
-# print("중복 제거 한 챔피언의 모든 아이디: ", len(list(set(chamID_list))))
-# print("챔피언 이름과 아이디를 매핑시킨 해시: ", chamID_hash)
+    # 해당 티어에서 치룬 모든 게임 수: total_cnt
+    total_cnt = len(list(set(table['matchID'])))
+
+    # 저장을 위해 chaminfo에 저장된 테이블 스키마 df로 불러오기
+    cham_df = select_db(str(save_name),conn_cham)
 
 
-def iterate_posit():
-    # 해당 티어에서 치룬 모든 게임: total_cnt
-    total_cnt = len(list(set(chall_classic['matchId'])))
+    # chamID_hash = {챔피언 이름: 챔피언 ID} 매핑해주는 해시 for ban픽 챔피언 서치
+    for i in range(len(table)):
+        if table['championName'][i] not in chamID_hash:
+            chamID_hash[str(table['championName'][i])] = table['championId'][i]
 
-    # 저장된 스키마 불러오기
-    chall_cham = select_db('chall_cham',conn_cham)
 
-    data_list = []  # 임시 저장을 위한 리스트
-    for i in range(len(posit_list)):  # teamposition iterate  # len(posit_list)
-        print("조회할 팀포지션은 ",posit_list[i],"입니다 --------------------------------------")
+        # 게임에 등장한 모든 teamposition을 담은 posit_list
+        if table['teamPosition'][i] not in posit_list:
+            posit_list.append(table['teamPosition'][i])
+
+
+    for i in range(len(teamposit_list)):  # teamposition iterate  # len(posit_list)
+        print("조회할 팀포지션은 ",teamposit_list[i],"입니다 --------------------------------------")
+        # 포지션 별 챔피언 이름을 중복없이 저장하기 위해 해시 이용: posit_cham
         posit_cham = {}
 
-        for j in range(len(chall_classic)):  # all data iterate for collect chamName per position
-            if chall_classic['teamPosition'][j] == posit_list[i]:
-                chamName_key = str(chall_classic['championName'][j])
+        for j in range(len(table)):  # all data iterate for collect chamName per position
+            if table['teamPosition'][j] == teamposit_list[i]:
+                chamName_key = str(table['championName'][j])
                 posit_cham[chamName_key] = 0
 
 
         # print("posit_cham: ",posit_cham)
+
         for cham in posit_cham:  # chamName per position iterate
             win_cnt = 0
             ban_cnt = 0
             pick_cnt = 0
-            for j in range(len(chall_classic)):  # all data iterate
-                championId = chamID_hash[cham]
+            championId = chamID_hash[cham]
 
-                if chall_classic['teamPosition'][j] == posit_list[i] and chall_classic['championName'][j] == cham:
-                    championName = chall_classic['championName'][j]
-                    championId = chamID_hash[cham]
-                    teamPosition = chall_classic['teamPosition'][j]
-                    pick_cnt += 1
+            for j in range(len(table)):  # all data iterate
 
-                    if chall_classic['win'][j] == 1:
-                        win_cnt += 1
 
-                if chall_classic['bans'][j] == championId:
+                if table['bans'][j] == championId:
                     ban_cnt += 1
 
+                if table['teamPosition'][j] == teamposit_list[i] and table['championName'][j] == cham:
 
-            data_list = [championName, championId, teamPosition,
-                         total_cnt, win_cnt, ban_cnt, pick_cnt]
+                    championName = table['championName'][j]
+                    teamPosition = table['teamPosition'][j]
+                    pick_cnt += 1
+
+                    if table['win'][j] == 1:
+                        win_cnt += 1
+
+
+
+            # 모든 데이터에서 탐색이 끝나고 챔피언 별 승률, 픽율, 밴률 계산하기
+            print("total_cnt,win_cnt,ban_cnt,pick_cnt: ",total_cnt,win_cnt,ban_cnt,pick_cnt)
+            win_rate = round(win_cnt/pick_cnt,2)
+            ban_rate = round(ban_cnt/total_cnt, 2)
+            pick_rate = round(pick_cnt/total_cnt, 2)
+
+            data_list = [lowCase,championName, championId, teamPosition,
+                         total_cnt, win_rate, ban_rate, pick_rate]  # core, shoes, first_pur, prim_perk, prim_stlye etc
             print(data_list)
 
-            n = len(chall_cham)
-            chall_cham.loc[n] = data_list
+            n = len(cham_df)
+            cham_df.loc[n] = data_list
+    cham_df.to_sql(name=str(save_name), con=conn_cham, if_exists='append', index=False)
+def collect_aram(lowCase,table,save_name):
+    chamID_hash = {}
 
 
-    pprint.pprint(chall_cham)
-    # chall_cham.to_sql(name='chall_cham', con=conn_cham, if_exists='replace', index=False)
-iterate_posit()
+    # 해당 티어에서 치룬 모든 게임 수: total_cnt
+    total_cnt = len(list(set(table['matchID'])))
 
-# 사용하지 않는 함수임
-def iterate_chamName():
-    data_list = []  # 임시 저장을 위한 리스트
-    for i in range(len(chamName_list)):  # teamposition iterate  # len(posit_list)
+    # 저장을 위해 chaminfo에 저장된 테이블 스키마 df로 불러오기
+    cham_df = select_db(str(save_name),conn_cham)
+
+    # 챔피언 이름 모으기
+    cham_list = list(set(table['championName']))
+
+    # chamID_hash = {챔피언 이름: 챔피언 ID} 매핑해주는 해시 for ban픽 챔피언 서치
+    for i in range(len(table)):
+        if table['championName'][i] not in chamID_hash:
+            chamID_hash[str(table['championName'][i])] = table['championId'][i]
+
+    for cham in cham_list:          # appear champions iterate
         win_cnt = 0
         ban_cnt = 0
         pick_cnt = 0
-        teamPosition = {}
-        for j in range(len(chall_classic)):  # all data iterate
-            if chall_classic['championName'][j] == chamName_list[i]:
+        championId = chamID_hash[cham]
+
+        for i in range(len(table)): # all table data iterate
+
+
+            if table['championName'][i] == cham:
                 pick_cnt += 1
-                # teamPosition 해시값에 넣어주기 - 챔피언당 하나의 teamPosition만 가지는 게 아닐 수도 있으니까
-                if chall_classic['teamPosition'][j] not in teamPosition:
-                    teamPosition[str(chall_classic['teamPosition'][j])] = 1
-                else:
-                    teamPosition[str(chall_classic['teamPosition'][j])] +=1
-            if chall_classic['championName'][j] == chamName_list[i] and chall_classic['win'][j] == 1:  # 승리한 판
-                win_cnt += 1
-            if chall_classic['bans'][j] == chamID_hash[str(chamName_list[i])]:  # bans 개수
+
+                if table['win'][i] == 1:
+                    win_cnt += 1
+
+            if table['bans'][i] == championId:
                 ban_cnt += 1
 
-        data_list = [chamName_list[i],chamID_hash[str(chamName_list[i])],teamPosition,
-                     total_cnt,win_cnt,ban_cnt,pick_cnt]
+                # 모든 데이터에서 탐색이 끝나고 챔피언 별 승률, 픽율, 밴률 계산하기
+        print("total_cnt,win_cnt,ban_cnt,pick_cnt: ", total_cnt, win_cnt, ban_cnt, pick_cnt)
+        win_rate = round(win_cnt / pick_cnt, 2)
+        ban_rate = round(ban_cnt / total_cnt, 2)
+        pick_rate = round(pick_cnt / total_cnt, 2)
+
+        data_list = [lowCase, cham, championId,"ARAM",
+                     total_cnt, win_rate, ban_rate,pick_rate]  # core, shoes, first_pur, prim_perk, prim_stlye etc
+        print(data_list)
+
+        n = len(cham_df)
+        cham_df.loc[n] = data_list
+
+    cham_df.to_sql(name=str(save_name), con=conn_cham, if_exists='append', index=False)
+def iterate_perTier(lowCase):  #  collect_classic()보다 먼저 실행되는 함수
 
 
-        pprint.pprint(data_list)
+    # DB속 테이블 불러와 변수에 저장하기
+    for j in range(len(final_tables)): # iterate all gameinfo tables
+        tableName = final_tables[j][0]
+
+        if tableName[:len(lowCase)] == lowCase:
+            # print(tableName[:len(lowCase[i])],"==",lowCase[i])
+
+            if tableName[-1:] == 'm':       # 칼바람 정보 테이블
+                aram_table = select_db(tableName, conn_gam)
+                print(tableName,"정보를 불러와 aram_table 변수에 할당했습니다.")
+            if tableName[-1:] == 'n':        # 승자 정보 테이블
+                win_table = select_db(tableName,conn_gam)
+                print(tableName, "정보를 불러와 win_table 변수에 할당했습니다.")
+            if tableName[-1:] == 'e':       # 패자 정보 테이블
+                lose_table = select_db(tableName, conn_gam)
+                print(tableName, "정보를 불러와 lose_table 변수에 할당했습니다.")
+
+
+    # outer join 수행
+    classic_table = pd.merge(win_table,lose_table,how='outer')
+    # print(classic_table.head())
+    # print(aram_table.head())
+    # print(lowCase, "티어의 win_table 길이: ", len(win_table))
+    # print(lowCase, "티어의 lose_table 길이: ", len(lose_table))
+    # print(lowCase, "티어의 classic_table 길이: ", len(classic_table))
+
+    print(lowCase,"티어의 classic 게임에 대한 챔피언 정보를 저장합니다.")
+    collect_classic(lowCase=lowCase, table= classic_table,save_name = str(lowCase)+"_cham")
+    print(lowCase, "티어의 classic 게임에 대한 챔피언 정보를 저장합니다.")
+    collect_aram(lowCase=lowCase, table=aram_table, save_name = str(lowCase)+"_archam")
+def exe_prepro_cham():
+
+    # 데이터 불러오기# 1. MySQL에서 최종 테이블 불러오기
+    final_tables = show_tables(engine_gam)
+    # print(final_tables)
+
+    # chaminfo DB의 모든 테이블 데이터 날리고 스키마만 남기기
+    trun_tables(engine_name=engine_cham)
+
+    # 티어별 데이터 dataframe으로 불러와 저장하기
+    for t in range(len(lowCase)):  # iterate all tiers
+        # 티어별 gameinfo테이블을 불러오기 위한 함수
+        iterate_perTier(lowCase=lowCase[t])
+        print(lowCase[t],"티어의 모든 champion 정보를 저장했습니다.============================================================")
+
+exe_prepro_cham()
