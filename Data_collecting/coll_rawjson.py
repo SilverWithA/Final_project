@@ -7,11 +7,11 @@ from setting import *
 from db_functions import *
 
 def call_api(lowCase_tier,mat_list):
-    cnt = tier_cnt[str(lowCase_tier)]
+    # cnt = tier_cnt[str(lowCase_tier)]
+    cnt = len(mat_list)
     print(lowCase_tier, "에서 조회할 matchid 개수는: ", cnt,"=====================")
     # print(lowCase_tier,"에서 조회할 matchid 개수는: ", len(mat_list), " ===============================")
     tier_list = []
-    cnt = tier_cnt[str(lowCase_tier)]
     for i in range(cnt):  # len(mat_list)
 
 
@@ -69,7 +69,6 @@ def exe_collApiinfo():
 
     for i in range(len(key_names)):   # tier iterate   # len(key_names)
         lowCase_tier = str(key_names[i])[:-4]  #  str(key_names[i])[:-4]
-        print("lowCase_tier: ", lowCase_tier)        # tier에 해당하는 소문자
 
         # api_info에 저장할 collection 이름
         if lowCase_tier == 'chall':
@@ -96,6 +95,9 @@ def exe_collApiinfo():
 
 
         use_col.drop()         # 콜렉션 비우기
+        print("mat_info의 모든 콜렌션을 비웠습니다.")
+
+        print("lowCase_tier: ", lowCase_tier)  # tier에 해당하는 소문자
 
         # 조회할 때 사용할 티어별 모든 matchID 리스트에 저장하기
         mat_list = list(tier_mat[i][str(key_names[i])])  # list(tier_mat[i][str(key_names[i])])

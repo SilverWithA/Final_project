@@ -1,23 +1,10 @@
 import pandas as pd
 from setting import *
 from db_functions import *
+from cal_chamfunction import *
 import pprint
 
 final_tables = show_tables(engine_gam)
-
-def all_calculation():
-    def cal_lune():
-        pass
-    def cal_spell():
-        pass
-    def cal_skilltree():
-        pass
-    def cal_item_build():
-        pass
-    def cal_shoes():
-        pass
-    def cal_corebuild():
-        pass
 
 # iterate_perTier안에 들어가는 전처리 함수
 def collect_classic(lowCase,table,save_name):
@@ -56,16 +43,20 @@ def collect_classic(lowCase,table,save_name):
 
 
         # print("posit_cham: ",posit_cham)
-
         for cham in posit_cham:  # chamName per position iterate
             win_cnt = 0
             ban_cnt = 0
             pick_cnt = 0
             championId = chamID_hash[cham]
 
+            ka_cnt = 0
+            kda_list = []
+
+            spell1_1,spell1_2,spell2_1,spell2_2 = cal_spell(table)
+
+
+
             for j in range(len(table)):  # all data iterate
-
-
                 if table['bans'][j] == championId:
                     ban_cnt += 1
 
@@ -73,6 +64,9 @@ def collect_classic(lowCase,table,save_name):
 
                     championName = table['championName'][j]
                     teamPosition = table['teamPosition'][j]
+                    ka_cnt += table['kills'][j]
+                    ka_cnt += table['assists'][j]
+                    kda_list.append(round(ka_cnt / table['kills'][j]),2)
                     pick_cnt += 1
 
                     if table['win'][j] == 1:
@@ -85,9 +79,24 @@ def collect_classic(lowCase,table,save_name):
             win_rate = round(win_cnt/pick_cnt,2)
             ban_rate = round(ban_cnt/total_cnt, 2)
             pick_rate = round(pick_cnt/total_cnt, 2)
+            av_kda = round(sum(kda_list)/pick_cnt,2)
+
+            pri_perk1,pri_perk2,pri_perk3,pri_perk4,pri_style = cal_prim_lune(table,str(cham))
+            sub_perk1, sub_perk2, sub_style = cal_sub_lune(table,str(cham))
+            deffence, flex, offence = cal_ability(table,str(cham))
+
+            (spell1_1,spell1_2,spell1_cnt, spell1_rate,spell1_win,
+             spell2_1, spell2_2,spell2_cnt, spell2_rate,spell2_win) = cal_spell(table,str(cham))
 
             data_list = [lowCase,championName, championId, teamPosition,
-                         total_cnt, win_rate, ban_rate, pick_rate]  # core, shoes, first_pur, prim_perk, prim_stlye etc
+                         total_cnt, win_cnt,ban_cnt,pick_cnt,
+                         win_rate, ban_rate, pick_rate,av_kda,
+
+                         pri_perk1,pri_perk2,pri_perk3,pri_perk4,pri_style,
+                         sub_perk1,sub_perk2,sub_style,
+                         deffence, flex, offence,
+                         spell1_1, spell1_2, spell1_cnt, spell1_rate, spell1_win,
+                         spell2_1, spell2_2, spell2_cnt, spell2_rate, spell2_win]
             print(data_list)
 
             n = len(cham_df)
