@@ -80,15 +80,15 @@ def cal_sub_lune(table,chamName):
             if temp not in all_sublune:
                 all_sublune.append(temp)
 
-    print("all_sublune: ",all_sublune)
-    print("모든 경우의 수는: ", len(all_sublune))
+    # print("all_sublune: ",all_sublune)
+    # print("모든 경우의 수는: ", len(all_sublune))
 
     # count를 위한 해시 생성
     # sublune_cnt = {all_sublune의 index:all_sublune의 값}
     all_index = [str(i) for i in range(len(all_sublune))]
     sublune_hash = dict(zip(all_index,all_sublune))
 
-    print("sublune_hash: ",sublune_hash)
+    # print("sublune_hash: ",sublune_hash)
 
     # cnt올려주기 위한 hash 생성
     sublune_cnt = dict(zip(all_index, [0]* len(all_sublune)))
@@ -103,8 +103,7 @@ def cal_sub_lune(table,chamName):
                     sublune_cnt[str(all_sublune.index(temp2))] += 1
 
     sublune_cnt = dict(sorted(sublune_cnt.items(), key=lambda x:x[1],reverse=True))
-    print("sublune_cnt: ",sublune_cnt)
-    print("리신 등장 횟수: ", cnt)
+    # print("sublune_cnt: ",sublune_cnt)
     final_sublune =sublune_hash[str(list(sublune_cnt)[0])]      # 1순위 조합의 index
     # print(final_sublune)
     return final_sublune
@@ -203,11 +202,11 @@ def cal_spell(table,chamName):
 
     # {index:count} 오름차순으로 정리
     spell_cnt = dict(sorted(spell_cnt.items(), key=lambda x: x[1], reverse=True))
-    print("해당 챔피언의 모든 능력치 파편의 경우의 수 및 개수: ",spell_cnt)
+    # print("해당 챔피언의 모든 능력치 파편의 경우의 수 및 개수: ",spell_cnt)
 
     # 가장 경우의 수가 많은 능력치 파편을 저장을 위한 리스트에 넣어주기
     index_order = list(spell_cnt)  # cnt 내림 차순으로 인덱스의 순서
-    print("index_order: ",index_order)
+    # print("index_order: ",index_order)
     # print(abil_hash[index_order[0]])  # 1순위 조합
     a, b = spell_hash[str(index_order[0])]  # 1순위 조합
     c, d = spell_hash[str(index_order[1])]  # 2순위 조합
@@ -228,8 +227,8 @@ def cal_spell(table,chamName):
                 if table['win'][i] == True:
                     spell2_win += 1
     # cham_info에서 선언한 컬럼 순서대로
-    print("cham_cnt, spell1_cnt, spell2_cnt,spell1_win, spell2_win: ",
-          cham_cnt, spell1_cnt, spell2_cnt,spell1_win, spell2_win )
+    # print("cham_cnt, spell1_cnt, spell2_cnt,spell1_win, spell2_win: ",
+    #       cham_cnt, spell1_cnt, spell2_cnt,spell1_win, spell2_win )
     result = [a,b,spell1_cnt,round(spell1_cnt/cham_cnt,2),round(spell1_win/spell1_cnt,2),
               c,d,spell2_cnt,round(spell2_cnt/cham_cnt,2),round(spell2_win/spell2_cnt,2)]
     return result
@@ -248,7 +247,7 @@ def cal_skilltree(table,chamName):
             skill_slot = table['skill_slot'][i]
             if skill_slot not in all_skill and skill_slot != None:
                 all_skill.append(skill_slot)
-    print("해당 챔피언의 모든 스킬트리의 경우의 수: ",all_skill)
+    # print("해당 챔피언의 모든 스킬트리의 경우의 수: ",all_skill)
 
     # 경우의 수의 count를 담아줄 hash = {각 경우: count 수}
     skill_hash = dict(zip(all_skill,[0] * len(all_skill)))
@@ -262,12 +261,12 @@ def cal_skilltree(table,chamName):
 
     # cnt가 높은 순으로 내림차순
     skill_hash = dict(sorted(skill_hash.items(), key=lambda x: x[1], reverse=True))
-    print("skill_hash: ",skill_hash)   # 내림차순 결과
+    # print("skill_hash: ",skill_hash)   # 내림차순 결과
 
     fin = list(list(skill_hash)[0])  # 스킬 빌드 1순위만
 
     while len(fin) < 3:
-        print("mast_skill 추가 전: ",fin)
+        # print("mast_skill 추가 전: ",fin)
 
         mast_skill = ['1','2','3']
         for skill in fin:
@@ -276,9 +275,12 @@ def cal_skilltree(table,chamName):
                         fin.append(mast)
                         break
 
-    print("fin: ",fin)
-    print("str(fin): ",str(fin))
-    skill_build1,skill_build2,skill_build3 = fin
+    # print("fin: ",fin)
+    # print("str(fin): ",str(fin))
+    if len(fin) == 3:
+        skill_build1,skill_build2,skill_build3 = fin
+    else:
+        print("스킬 빌드가 3자 이상합니다", fin)
     skill_cnt = 0
     skill_win= 0
     for i in range(len(table)):
@@ -308,17 +310,17 @@ def cal_item_build(table,chamName):
             if temp not in all_itembuild:
                 all_itembuild.append(temp)
 
-    print("해당 챔피언의 모든 주 룬 세팅의 모든 경우의 수: ", all_itembuild)
-    print("그 개수는: ", len(all_itembuild))
+    # print("해당 챔피언의 모든 주 룬 세팅의 모든 경우의 수: ", all_itembuild)
+    # print("그 개수는: ", len(all_itembuild))
 
     # 조합의 출현 횟수 count를 위한 hash 만들기
     # {all_itembuild 인덱스: all_itembuild 조합의 값}
     combin_index = [str(i) for i in range(len(all_itembuild))]
     item_hash = dict(zip(combin_index, all_itembuild))
-    print("item_hash: ", item_hash)
+    # print("item_hash: ", item_hash)
 
     item_cnt = dict(zip(combin_index, [0] * len(all_itembuild)))
-    print("item_cnt: ", item_cnt)
+    # print("item_cnt: ", item_cnt)
 
     # # 주 룬세팅 조합의 개수 cnt해주기
     for i in range(len(table)):
@@ -335,7 +337,7 @@ def cal_item_build(table,chamName):
                     item_cnt[str(all_itembuild.index(temp2))] += 1
 
     item_cnt = dict(sorted(item_cnt.items(), key=lambda x: x[1], reverse=True))
-    print("정렬이 끝난 item_cnt: ", item_cnt)
+    # print("정렬이 끝난 item_cnt: ", item_cnt)
 
     # print(item_hash[str(list(item_cnt)[0])]) # 1순위 조합만 추출
     # print(item_hash[str(list(item_cnt)[1])])  # 2순위 조합만 추출
@@ -365,95 +367,162 @@ def cal_item_build(table,chamName):
                 item_set2_cnt += 1
                 if table['win'][i] == True:
                     item_set2_win += 1
-    print("item_set1_cnt,item_set2_cnt,item_set1_win,item_set2_win: ", item_set1_cnt,item_set2_cnt,item_set1_win,item_set2_win)
+    # print("item_set1_cnt,item_set2_cnt,item_set1_win,item_set2_win: ", item_set1_cnt,item_set2_cnt,item_set1_win,item_set2_win)
 
     result = [item_set1_1,item_set1_2,item_set1_3,
-              item_set1_4,item_set1_5,item_set1_6,
+              item_set1_4,item_set1_5,item_set1_6,item_set1_7,item_set1_8,
               item_set1_cnt,round(item_set1_cnt/cham_cnt,2),round(item_set1_win/item_set1_cnt,2),
 
               item_set2_1, item_set2_2, item_set2_3,
-              item_set2_4, item_set2_5, item_set2_6,
+              item_set2_4, item_set2_5, item_set2_6,item_set2_7,item_set2_8,
               item_set2_cnt, round(item_set2_cnt/cham_cnt, 2), round(item_set2_win/item_set2_cnt, 2)
               ]
     return  result
 # print(cal_item_build(classic_df,'LeeSin'))
 
 
-
-# ----------------------------------------------------------
 # 5. 신발
-def cal_shoes(table):
+def cal_shoes(table,chamName):
     all_shoes =[]
-
+    cham_cnt = 0
     # 모든 경우의 수 찾기
     for i in range(len(table)):
-        if table['shoes'][i] not in all_shoes:
-            if table['shoes'][i] == None:
-                continue
-            all_shoes.append(table['shoes'][i])
-    print("챔피언의 모든 신발의 경우의 수는: ", all_shoes)
-
+        if table['championName'][i] == chamName:
+            if table['shoes'][i] not in all_shoes:
+                if table['shoes'][i] == None:
+                    continue
+                all_shoes.append(table['shoes'][i])
+    # print("챔피언의 모든 신발의 경우의 수는: ", all_shoes)
     shoes_hash = dict(zip(all_shoes,[0]*len(all_shoes)))
 
     # 신발 등장 횟수 count
     for i in range(len(table)):
-        if table['shoes'][i] == None:
-            continue
-        shoes_hash[str(table['shoes'][i])] += 1
+        if table['championName'][i] == chamName:
+            if table['shoes'][i] == None:
+                continue
+            shoes_hash[str(table['shoes'][i])] += 1
 
     # 내림차순 정렬하기
     shoes_hash = dict(sorted(shoes_hash.items(), key=lambda x: x[1], reverse=True))
-    print("shoes_hash: ", shoes_hash)
+    # print("shoes_hash: ", shoes_hash)
     a = list(shoes_hash)[0]  # shoes_hash값만 list로 만들어 1순위, 2순위만 추출
     b = list(shoes_hash)[1]
-    print("최종 값: ",a,b)
-# 6. 코어 빌드
-def cal_corebuild(table):
-    all_core = []
+    # print("최종 값: ",a,b)
+
+    # ----------------------------------------------------------
+    shoes1_cnt = 0   # 신발 표본수
+    shoes1_win = 0   # 신발별 승률
+    shoes2_cnt = 0
+    shoes2_win = 0
 
     for i in range(len(table)):
-        temp = [table['core1'][i], table['core2'][i],
-                table['core3'][i], table['core4'][i],
-                table['core5'][i], table['core6'][i]]
+        if table['championName'][i] == chamName:
+            cham_cnt += 1
+            if table['shoes'][i] == str(a):
+                shoes1_cnt +=1
+                if table['win'][i] == True:
+                    shoes1_win += 1
+            elif table['shoes'][i] == str(b):
+                shoes2_cnt +=1
+                if table['win'][i] == True:
+                    shoes2_win += 1
 
-        if temp == [None] * 6:
-            continue
+    result = [a,shoes1_cnt,round(shoes1_cnt/cham_cnt,2),round(shoes1_win/shoes1_cnt,2),
+              b,shoes2_cnt,round(shoes2_cnt/cham_cnt,2),round(shoes2_win/shoes2_cnt,2)]
+    return result
 
-        if temp not in all_core:
-            all_core.append(temp)
 
-    print("해당 챔피언의 모든 주 코어의 모든 경우의 수: ", all_core)
-    print("그 개수는: ", len(all_core))
+# print(cal_shoes(classic_df,'LeeSin'))
+# 6. 코어 빌드
+def cal_corebuild(table,chamName):
+    all_core = []
+    cham_cnt = 0
+
+    for i in range(len(table)):
+        if table['championName'][i] == chamName:
+            temp = [table['core1'][i], table['core2'][i],
+                    table['core3'][i], table['core4'][i],
+                    table['core5'][i], table['core6'][i]]
+
+            if temp == [None] * 6:
+                continue
+
+            if temp not in all_core:
+                all_core.append(temp)
+
+    # print("해당 챔피언의 모든 주 코어의 모든 경우의 수: ", all_core)
+    # print("그 개수는: ", len(all_core))
 
     # 조합의 출현 횟수 count를 위한 hash 만들기
     # {all_itembuild 인덱스: all_itembuild 조합의 값}
     combin_index = [str(i) for i in range(len(all_core))]
     core_hash = dict(zip(combin_index, all_core))
-    print("core_hash: ", core_hash)
+    # print("core_hash: ", core_hash)
 
     core_cnt = dict(zip(combin_index, [0] * len(all_core)))
-    print("core_cnt: ", core_cnt)
+    # print("core_cnt: ", core_cnt)
 
     # # 주 룬세팅 조합의 개수 cnt해주기
     for i in range(len(table)):
-        temp2 = [table['core1'][i], table['core2'][i],
-                table['core3'][i], table['core4'][i],
-                table['core5'][i], table['core6'][i]]
+        if table['championName'][i] == chamName:
+            temp2 = [table['core1'][i], table['core2'][i],
+                    table['core3'][i], table['core4'][i],
+                    table['core5'][i], table['core6'][i]]
 
-        for conbin in core_hash.values():
-            if temp2 == conbin:
-                # print("temp2: ",temp2)
-                # print("index: ",all_lune.index(temp2))
-                core_cnt[str(all_core.index(temp2))] += 1
+            for conbin in core_hash.values():
+                if temp2 == conbin:
+                    # print("temp2: ",temp2)
+                    # print("index: ",all_lune.index(temp2))
+                    core_cnt[str(all_core.index(temp2))] += 1
 
     core_cnt = dict(sorted(core_cnt.items(), key=lambda x: x[1], reverse=True))
-    print("정렬이 끝난 core_cnt: ", core_cnt)
+    # print("정렬이 끝난 core_cnt: ", core_cnt)
 
-    print(core_hash[str(list(core_cnt)[0])])  # 1순위 조합만 추출
-    print(core_hash[str(list(core_cnt)[1])])  # 2순위 조합만 추출
+    core1, core2, core3 = core_hash[str(list(core_cnt)[0])],core_hash[str(list(core_cnt)[1])],core_hash[str(list(core_cnt)[2])]
 
-    fin_core = [core_hash[str(list(core_cnt)[0])],core_hash[str(list(core_cnt)[1])],
-                     core_hash[str(list(core_cnt)[2])], core_hash[str(list(core_cnt)[3])]]
+    core1_cnt = 0
+    core1_win = 0
+    core2_cnt = 0
+    core2_win = 0
+    core3_cnt = 0
+    core3_win = 0
 
-    print(fin_core)
+    # 코어마다 표본수, 점유율, 승률 계산
+    for i in range(len(table)):
+        if table['championName'][i] == chamName:
+            cham_cnt +=1
+            temp3 = [table['core1'][i], table['core2'][i],
+                        table['core3'][i], table['core4'][i],
+                        table['core5'][i], table['core6'][i]]
+
+            if temp3 == core1:
+                core1_cnt += 1
+                if table['win'][i] == True:
+                    core1_win += 1
+            elif temp3 == core2:
+                core2_cnt += 1
+                if table['win'][i] == True:
+                    core2_win += 1
+            elif temp3 == core3:
+                core3_cnt += 1
+                if table['win'][i] == True:
+                    core3_win += 1
+
+    core1_1, core1_2, core1_3, core1_4, core1_5, core1_6 = core1
+    core2_1, core2_2, core2_3, core2_4, core2_5, core2_6 = core2
+    core3_1, core3_2, core3_3, core3_4, core3_5, core3_6 = core3
+
+
+    result = [core1_1, core1_2, core1_3, core1_4, core1_5, core1_6,
+              core1_cnt, round(core1_cnt/cham_cnt,2),round(core1_win/core1_cnt,2),
+
+              core2_1, core2_2, core2_3, core2_4, core2_5, core2_6,
+              core2_cnt, round(core2_cnt / cham_cnt, 2), round(core2_win / core2_cnt, 2),
+
+              core3_1, core3_2, core3_3, core3_4, core3_5, core3_6,
+              core3_cnt, round(core3_cnt / cham_cnt, 2), round(core3_win / core3_cnt, 2)]
+
+    return result
+
+# print(cal_corebuild(classic_df,'LeeSin'))
 

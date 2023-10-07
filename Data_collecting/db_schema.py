@@ -172,10 +172,10 @@ def create_chaminfo():
 
             with engine_cham.begin() as connection:
                 connection.execute(text('CREATE TABLE {}('
-                                        'tier varchar(255),'
-                                        'championName varchar(255),'
-                                        'championId varchar(255),'
-                                        'teamPosition varchar(255),'
+                                        'tier varchar(5),'
+                                        'championName varchar(10),'
+                                        'championId varchar(10),'
+                                        'teamPosition varchar(10),'
                                         
                                         'total_cnt int(10),'        # 전체 게임
                                         'win_cnt int(10),'
@@ -252,7 +252,7 @@ def create_chaminfo():
                                         'shoes2 varchar(255),'
                                         'shoes2_cnt int(10),'
                                         'shoes2_rate float(4),'
-                                        'shoes2_win float(4)'
+                                        'shoes2_win float(4),'
                                         
                                         'core1_1 varchar(255),'
                                         'core1_2 varchar(255),'
@@ -288,7 +288,7 @@ def create_chaminfo():
 
 # create_gameinfo()
 # create_gameinfo()
-create_gameinfo_new()
-# create_chaminfo()
+# create_gameinfo_new()
+create_chaminfo()
 print("성공적으로 테이블 스키마가 만들어 졌습니다.")
 conn_gam.close()
