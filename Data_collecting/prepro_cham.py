@@ -1,7 +1,7 @@
 import pandas as pd
 from setting import *
 from db_functions import *
-from test import *
+from prepro_cal_function import *
 import pprint
 
 final_tables = show_tables(engine_gam)
