@@ -11,34 +11,56 @@ win_df = select_db(table_list[2][0],conn_name=conn_gam)
 
 # chall_classic = pd.merge# print(chall_win.head())
 classic_df = pd.merge(lose_df,win_df, how='outer')
-columns_list = ["matchId","win", "gameMode", "summonerName","puuid","teamPosition",
-                                   "championName","championId","assists","kills", "deaths",
-                                   "defense","flex","offense",
-                                   "prim1_perk", "prim2_perk", "prim3_perk", "prim4_perk","prim_style",
-                                   "sub1_perk", "sub2_perk", "sub_style",
-                                   "summoner1Id","summoner2Id",
-                                   "first_pur1","first_pur2","first_pur3","first_pur4",
-                                   "first_pur5","first_pur6","first_pur7","first_pur8",
-                                   "skill_slot","bans",
-                                   "core1","core2","core3","core4","core5","core6","shoes"]
 
-# 챔피언 별 세팅 계산하는 함수임
-# 1. 룬 계산하기 - 챔피언
-def cal_prim_lune(table,chamName):
+cham_list = ['LeeSin','Zyra']
+chamID_hash = {}
+test_cham_df = pd.DataFrame(columns=columns_list)
+
+for i in range(len(classic_df)):
+    if classic_df['championName'][i] not in chamID_hash:
+        chamID_hash[str(classic_df['championName'][i])] = classic_df['championId'][i]
+
+    if classic_df['championName'][i] == 'LeeSin':
+        n = len(test_cham_df)
+        test_cham_df.loc[n] = classic_df.loc[i]
+
+
+def cal_base(cham_df, cham_cnt):
+    win_cnt = 0
+    kda_list = []
+    kda_null = 0
+
+    for j in range(len(cham_df)):
+        # 승리한 게임 count
+        if cham_df['win'][j] == True:
+               win_cnt += 1
+
+        # kda 평균값 계산을 위해 각 참가자의 kda를 kda_list에 값 쌓아주기
+        ka_cnt = (int(cham_df['kills'][j]) + int(cham_df['assists'][j]))
+
+        if int(cham_df['deaths'][j]) != 0:
+            kda = round(ka_cnt / int(cham_df['deaths'][j]), 2)
+            kda_list.append(kda)
+        else:
+            kda_null += 1
+
+
+    # print("win_cnt,len(kda_list): ",win_cnt,len(kda_list))
+    av_kda = round(sum(kda_list)/(cham_cnt-kda_null),2)
+    win_rate = round(win_cnt/cham_cnt,4)
+
+    result = [win_cnt,win_rate,av_kda]
+    return result
+
+# print(cal_base(test_cham_df,cham_cnt=len(test_cham_df)))
+
+
+
+
+# 1. 메인 룬 계산하기 - 챔피언
+def cal_prim_lune(cham_df):
     all_lune = []
-
-    # chamName에 해당하는 로우만 담아주는 df
-    cham_df = pd.DataFrame(columns=columns_list)
-
-    # chamName에 해당하는 로우만 담는 연산
-    for i in range(len(table)):
-        if table['championName'][i] == chamName:
-            n = len(cham_df)
-            # print(n)
-            cham_df.loc[n] = list(table.loc[i])
-    # print(chamName,"table이 완성되었습니다. 길이는", len(cham_df))
-
-
+    
     # lune세팅의 모든 경우의 수 찾기
     for j in range(len(cham_df)):
         temp = [cham_df['prim1_perk'][j],cham_df['prim2_perk'][j],cham_df['prim3_perk'][j],cham_df['prim4_perk'][j],cham_df['prim_style'][j]]
@@ -49,7 +71,7 @@ def cal_prim_lune(table,chamName):
     # print("그 개수는: ", len(all_lune))
 
     # 조합의 출현 횟수 count를 위한 hash 만들기
-    # {all_lune의 인덱스: all_lune의 조합의 값}
+    # {all_lune에서의 인덱스: all_lune의 조합의 값}
     combin_index = [str(i) for i in range(len(all_lune))]
     primlune_hash = dict(zip(combin_index, all_lune))
     # print("primlune_hash: ", primlune_hash)
@@ -57,8 +79,7 @@ def cal_prim_lune(table,chamName):
     primlune_cnt = dict(zip(combin_index, [0]* len(all_lune)))
     # print("primlune_cnt: ",primlune_cnt)
 
-    # 주 룬세팅 조합의 개수 cnt해주기
-
+    # 주 룬세팅 조합의 개수 count 연산해주기
     for i in range(len(cham_df)):
         temp2 = [cham_df['prim1_perk'][i], cham_df['prim2_perk'][i], cham_df['prim3_perk'][i],  cham_df['prim4_perk'][i], cham_df['prim_style'][i]]
 
@@ -70,28 +91,16 @@ def cal_prim_lune(table,chamName):
 
     primlune_cnt = dict(sorted(primlune_cnt.items(), key=lambda x:x[1], reverse=True))
     # print("정렬이 끝난 primlune_cnt: ",primlune_cnt)
-    # print("리신 등장 횟수: ",cnt)
     # a,b,c,d,e = primlune_hash[str(list(primlune_cnt)[0])]  # 1순위 조합만 추출
+    result = primlune_hash[str(list(primlune_cnt)[0])]
 
 
-    return primlune_hash[str(list(primlune_cnt)[0])]
+    return result
+# print(cal_prim_lune(test_cham_df))
 
-# print(cal_prim_lune(classic_df,'LeeSin'))
-# print()
-# print(cal_prim_lune(classic_df,'Zyra'))
-
-def cal_sub_lune(table,chamName):
+# 2. 서브 룬 계산
+def cal_sub_lune(cham_df):
     all_sublune = []
-
-    # chamName에 해당하는 로우만 담아주는 df
-    cham_df = pd.DataFrame(columns=columns_list)
-
-    # chamName에 해당하는 table의 rows를 cham_df에 저장
-    for i in range(len(table)):
-        if table['championName'][i] == chamName:
-            n = len(cham_df)
-            cham_df.loc[n] = table.loc[i]
-    # print(chamName,"의 등장 횟수는: ", len(cham_df))
 
     # 모든 경우의 수 저장
     for i in range(len(cham_df)):
@@ -107,7 +116,6 @@ def cal_sub_lune(table,chamName):
     # sublune_cnt = {all_sublune의 index:all_sublune의 값}
     all_index = [str(i) for i in range(len(all_sublune))]
     sublune_hash = dict(zip(all_index,all_sublune))
-
     # print("sublune_hash: ",sublune_hash)
 
     # cnt올려주기 위한 hash 생성
@@ -125,26 +133,13 @@ def cal_sub_lune(table,chamName):
     final_sublune =sublune_hash[str(list(sublune_cnt)[0])]      # 1순위 조합의 index
     # print(final_sublune)
     return final_sublune
+# print(cal_sub_lune(test_cham_df))
 
-# print(cal_sub_lune(classic_df,'LeeSin'))
-# print()
-# print(cal_sub_lune(classic_df,'Zyra'))
-
-# 1-1. 능력치 파편
-def cal_ability(table,chamName):
+# 3. 능력치 파편
+def cal_ability(cham_df):
     abil_combin = []
 
-    # chamName에 해당하는 로우만 담아주는 df
-    cham_df = pd.DataFrame(columns=columns_list)
-
-    # chamName에 해당하는 table의 rows를 cham_df에 저장
-    for i in range(len(table)):
-        if table['championName'][i] == chamName:
-            n = len(cham_df)
-            cham_df.loc[n] = table.loc[i]
-    # print(chamName,"의 등장 횟수는: ", len(cham_df))
-
-    # 모든 조합 경우의 수 찾기
+    # 능력치 파편의 모든 조합 경우의 수 찾기
     for i in range(len(cham_df)):  # all table data iterate
         temp1 = [cham_df['defense'][i],cham_df['flex'][i],cham_df['offense'][i]]
 
@@ -176,13 +171,10 @@ def cal_ability(table,chamName):
 
     # 가장 경우의 수가 많은 능력치 파편을 저장을 위한 리스트에 넣어주기
     index_order = list(cnt_ability)   # cnt 내림 차순으로 인덱스의 순서
-    # print("리신 등장 횟수: ", cnt)
-    # print(abil_hash[index_order[0]])  # 1순위 조합
-    # a,b,c =abil_hash[index_order[0]]  # 1순위 조합
 
     return abil_hash[index_order[0]]
 
-# print(cal_ability(classic_df,'LeeSin'))
+# print(cal_ability(test_cham_df))
 # print(cal_ability(classic_df,'Zyra'))
 
 # 2. 소환사 주문

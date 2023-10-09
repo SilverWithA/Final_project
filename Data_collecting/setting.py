@@ -41,3 +41,25 @@ core_list = [3087, 6632, 3179, 6672, 3115, 2065, 3152, 6631, 3078,
 shoes_list = [3006,3009,3020,3047,3111,3117,3158]
 
 teamposit_list = ['TOP', 'JUNGLE', 'MIDDLE', 'BOTTOM', 'UTILITY']
+
+
+# 브론즈 티어 협곡에서 등장하는 모든 챔피언에 대한 해시값 매핑임 - 모든 챔피언 매핑값은 아님!!!
+# chamID_hash = {'Urgot': '6', 'Briar': '233', 'Akali': '84', 'Ezreal': '81', 'Pantheon': '80', 'Darius': '122', 'Kindred': '203', 'Kaisa': '145', 'Vayne': '67', 'Lux': '99', 'Sett': '875', 'LeeSin': '64', 'Ahri': '103', 'Nilah': '895', 'Vex': '711', 'Nautilus': '111', 'KSante': '897', 'Shen': '98', 'Zac': '154', 'Ashe': '22', 'Heimerdinger': '74', 'Vi': '254', 'Kayn': '141', 'Tristana': '18', 'Zed': '238', 'Tryndamere': '23', 'Draven': '119', 'Swain': '50', 'MissFortune': '21', 'Sona': '37', 'Gangplank': '41', 'Yone': '777', 'MasterYi': '11', 'Rumble': '68', 'Rammus': '33', 'Seraphine': '147', 'Lucian': '236', 'Yuumi': '350', 'Aatrox': '266', 'JarvanIV': '59', 'Jinx': '222', 'Leona': '89', 'Aphelios': '523', 'Kayle': '10', 'Nunu': '20', 'Naafiri': '950', 'Nasus': '75', 'Shaco': '35', 'Irelia': '39', 'Samira': '360', 'Renekton': '58', 'Garen': '86', 'Morgana': '25', 'Anivia': '34', 'Poppy': '78', 'Singed': '27', 'Illaoi': '420', 'Trundle': '48', 'Khazix': '121', 'Ekko': '245', 'Quinn': '133', 'Sylas': '517', 'Amumu': '32', 'Yasuo': '157', 'Warwick': '19', 'Hecarim': '120', 'Azir': '268', 'Blitzcrank': '53', 'Nocturne': '56', 'MonkeyKing': '62', 'Caitlyn': '51', 'Volibear': '106', 'Graves': '104', 'TahmKench': '223', 'Belveth': '200', 'Viego': '234', 'XinZhao': '5', 'Varus': '110', 'Rakan': '497', 'Thresh': '412', 'Nidalee': '76', 'Xerath': '101', 'Diana': '131', 'Cassiopeia': '69', 'Soraka': '16', 'Jhin': '202', 'Xayah': '498', 'Leblanc': '7', 'Karthus': '30', 'Janna': '40', 'Fiora': '114', 'AurelionSol': '136', 'DrMundo': '36', 'Ryze': '13', 'Nami': '267', 'Bard': '432', 'Sion': '14', 'Gwen': '887', 'Syndra': '134', 'Teemo': '17', 'Yorick': '83', 'Senna': '235', 'Udyr': '77', 'Karma': '43', 'Maokai': '57', 'Mordekaiser': '82', 'Malphite': '54', 'Twitch': '29', 'Olaf': '2', 'Rengar': '107', 'Pyke': '555', 'Lillia': '876', 'Sivir': '15', 'Ornn': '516', 'Neeko': '518', 'Zoe': '142', 'Evelynn': '28', 'Orianna': '61', 'Chogath': '31', 'Jax': '24', 'Galio': '3', 'Zeri': '221', 'Zyra': '143', 'Sejuani': '113', 'Lissandra': '127', 'Brand': '63', 'Alistar': '12', 'Camille': '164', 'Annie': '1', 'Kassadin': '38', 'Katarina': '55', 'Lulu': '117', 'Veigar': '45', 'Braum': '201', 'Gragas': '79', 'Talon': '91', 'Malzahar': '90', 'Rell': '526', 'Jayce': '126', 'Viktor': '112', 'Ziggs': '115', 'Taliyah': '163', 'Kled': '240', 'Ivern': '427', 'Elise': '60', 'Akshan': '166', 'Riven': '92', 'Qiyana': '246', 'Kennen': '85', 'Skarner': '72', 'Shyvana': '102', 'Fizz': '105', 'Milio': '902', 'Vladimir': '8', 'RekSai': '421', 'FiddleSticks': '9', 'TwistedFate': '4', 'Velkoz': '161', 'Zilean': '26', 'KogMaw': '96', 'Gnar': '150', 'Kalista': '429', 'Renata': '888', 'Taric': '44', 'Corki': '42'}
+# 모으기위한 연산 스캐치임
+# for j in range(len(tier)):
+#     for i in range(len(tier_table)):
+#         pass
+# print("chamID_hash에 ",len(chamID_hash),"개의 챔피언 ID정보가 모였습니다.")
+
+teamposit_list = ['TOP','JUNGLE','MIDDLE','BOTTOM','UTILITY']
+
+columns_list = ["matchID","win", "gameMode", "summonerName","puuid","teamPosition",
+                                   "championName","championId","assists","kills", "deaths",
+                                   "defense","flex","offense",
+                                   "prim1_perk", "prim2_perk", "prim3_perk", "prim4_perk","prim_style",
+                                   "sub1_perk", "sub2_perk", "sub_style",
+                                   "summoner1Id","summoner2Id",
+                                   "first_pur1","first_pur2","first_pur3","first_pur4",
+                                   "first_pur5","first_pur6","first_pur7","first_pur8",
+                                   "skill_slot","bans",
+                                   "core1","core2","core3","core4","core5","core6","shoes"]
