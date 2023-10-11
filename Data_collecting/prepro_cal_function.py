@@ -20,11 +20,11 @@ for i in range(len(classic_df)):
     if classic_df['championName'][i] not in chamID_hash:
         chamID_hash[str(classic_df['championName'][i])] = classic_df['championId'][i]
 
-    if classic_df['championName'][i] == 'LeeSin':
+    if classic_df['championName'][i] == 'Aphelios':
         n = len(test_cham_df)
         test_cham_df.loc[n] = classic_df.loc[i]
 
-
+# 1 승률, kda 구하기(메타점수)
 def cal_base(cham_df, cham_cnt):
     win_cnt = 0
     kda_list = []
@@ -46,18 +46,19 @@ def cal_base(cham_df, cham_cnt):
 
 
     # print("win_cnt,len(kda_list): ",win_cnt,len(kda_list))
-    av_kda = round(sum(kda_list)/(cham_cnt-kda_null),2)
+    if (cham_cnt-kda_null) == 0:
+        print("cham_cnt: ",cham_cnt)
+        print("kda_null: ", kda_null)
+        av_kda = None
+    else:
+        av_kda = round(sum(kda_list)/(cham_cnt-kda_null),2)
     win_rate = round(win_cnt/cham_cnt,4)
 
     result = [win_cnt,win_rate,av_kda]
     return result
-
 # print(cal_base(test_cham_df,cham_cnt=len(test_cham_df)))
 
-
-
-
-# 1. 메인 룬 계산하기 - 챔피언
+# 2. 룬 계산하기 - 메인룬
 def cal_prim_lune(cham_df):
     all_lune = []
     
@@ -98,7 +99,7 @@ def cal_prim_lune(cham_df):
     return result
 # print(cal_prim_lune(test_cham_df))
 
-# 2. 서브 룬 계산
+# 2-(1). 룬 계산하기 - 서브룬
 def cal_sub_lune(cham_df):
     all_sublune = []
 
@@ -177,20 +178,9 @@ def cal_ability(cham_df):
 # print(cal_ability(test_cham_df))
 # print(cal_ability(classic_df,'Zyra'))
 
-# 2. 소환사 주문
-def cal_spell(table,chamName):
+# 4. 소환사 주문
+def cal_spell(cham_df,cham_cnt):
     spell_combin = []
-    cham_cnt = 0
-
-    # chamName에 해당하는 로우만 담아주는 df
-    cham_df = pd.DataFrame(columns=columns_list)
-
-    # chamName에 해당하는 table의 rows를 cham_df에 저장
-    for i in range(len(table)):
-        if table['championName'][i] == chamName:
-            n = len(cham_df)
-            cham_df.loc[n] = table.loc[i]
-    # print(chamName,"의 등장 횟수는: ", len(cham_df))
 
     # 모든 조합 경우의 수 찾기
     for i in range(len(cham_df)):
@@ -199,11 +189,12 @@ def cal_spell(table,chamName):
             spell_combin.append(temp)
 
     # print("능력치 파편의 모든 경우의 수는: ", len(spell_combin), "가지 입니다.")
+    # print("spell_combin: ",spell_combin)
     keys = [str(i) for i in range(len(spell_combin))]
 
     # {index: abil_combin} = {어떤 경우의 수의 abil_combin 인덱스: 경우의 수 리스트}
     spell_hash = dict(zip(keys, spell_combin))
-    # print("abil_combin의 인덱스: 경우의 수 = abil_hash: ", spell_hash)
+    # print("spell_hash의 인덱스: 경우의 수 = spell_hash: ", spell_hash)
 
 
     # 경우의 수 별 count 세기
@@ -225,48 +216,52 @@ def cal_spell(table,chamName):
     # 가장 경우의 수가 많은 능력치 파편을 저장을 위한 리스트에 넣어주기
     index_order = list(spell_cnt)  # cnt 내림 차순으로 인덱스의 순서
     # print("index_order: ",index_order)
-    # print(abil_hash[index_order[0]])  # 1순위 조합
-    a, b = spell_hash[str(index_order[0])]  # 1순위 조합
-    c, d = spell_hash[str(index_order[1])]  # 2순위 조합
+    # print("1순위 조합: ", spell_hash[index_order[0]])  # 1순위 조합
+    # print("2순위 조합: ", spell_hash[index_order[1]])  # 2순위 조합
+    if len(index_order) >= 2:
+        spell1_1, spell1_2 = spell_hash[str(index_order[0])]  # 1순위 조합
+        spell2_1, spell2_2 = spell_hash[str(index_order[1])]  # 2순위 조합
+    elif len(index_order) == 1:     # 1순위 조합만 있음
+        spell1_1, spell1_2 = spell_hash[str(index_order[0])]  # 1순위 조합
+        spell2_1, spell2_2 = [None] * 2
+    else:
+        return [None] * 10
+
+
 
     spell1_cnt = 0
     spell2_cnt = 0
     spell1_win = 0
     spell2_win = 0
-    cham_cnt =len(cham_df)
+
     for i in range(len(cham_df)):
-        if cham_df['summoner1Id'][i] == a and cham_df['summoner2Id'][i] == b:
+        if cham_df['summoner1Id'][i] == spell1_1 and cham_df['summoner2Id'][i] == spell1_2:
             spell1_cnt +=1
             if cham_df['win'][i] == True:
                 spell1_win += 1
-        elif cham_df['summoner1Id'][i] == c and cham_df['summoner2Id'][i] == d:
+        elif cham_df['summoner1Id'][i] == spell2_1 and cham_df['summoner2Id'][i] == spell2_2:
             spell2_cnt += 1
             if cham_df['win'][i] == True:
                 spell2_win += 1
     # cham_info에서 선언한 컬럼 순서대로
     # print("cham_cnt, spell1_cnt, spell2_cnt,spell1_win, spell2_win: ",
     #       cham_cnt, spell1_cnt, spell2_cnt,spell1_win, spell2_win )
-    result = [a,b,spell1_cnt,round(spell1_cnt/cham_cnt,2),round(spell1_win/spell1_cnt,2),
-              c,d,spell2_cnt,round(spell2_cnt/cham_cnt,2),round(spell2_win/spell2_cnt,2)]
+
+    # division zero 방지 디버깅
+    if spell1_cnt == 0:
+        spell1_cnt +=1
+    if spell2_cnt == 0:
+        spell2_cnt +=1
+
+    result = [spell1_1,spell1_2,spell1_cnt,round(spell1_cnt/cham_cnt,2),round(spell1_win/spell1_cnt,2),
+              spell2_1,spell2_2,spell2_cnt,round(spell2_cnt/cham_cnt,2),round(spell2_win/spell2_cnt,2)]
     return result
-# print(cal_spell(classic_df,'LeeSin'))
-# print(cal_spell(classic_df,'Zyra'))
+# print(cal_spell(cham_df=test_cham_df,cham_cnt=len(test_cham_df)))
 
 
-# 3. 스킬 빌드
-def cal_skilltree(table,chamName):
+# 5. 스킬 빌드
+def cal_skilltree(cham_df, cham_cnt):
     all_skill = []
-    cham_cnt = 0
-
-    # chamName에 해당하는 로우만 담아주는 df
-    cham_df = pd.DataFrame(columns=columns_list)
-
-    # chamName에 해당하는 table의 rows를 cham_df에 저장
-    for i in range(len(table)):
-        if table['championName'][i] == chamName:
-            n = len(cham_df)
-            cham_df.loc[n] = table.loc[i]
-    # print(chamName,"의 등장 횟수는: ", len(cham_df))
 
     # 모든 skill_slot의 경우의 수 구하기
     for i in range(len(cham_df)):
@@ -288,11 +283,16 @@ def cal_skilltree(table,chamName):
     skill_hash = dict(sorted(skill_hash.items(), key=lambda x: x[1], reverse=True))
     # print("skill_hash: ",skill_hash)   # 내림차순 결과
 
+    # 스킬빌드가 아예 없는 경우 디버깅
+    if len(list(list(skill_hash))) == 0:
+        return [None] * 6
+
     fin = list(list(skill_hash)[0])  # 스킬 빌드 1순위만
 
-    while len(fin) < 3:
+    # 마스터한 스킬이 2가지 뿐이면 남은 한가지를 채워주는 반복문
+    # 마스터 스킬이 1가지 뿐이면 1개인채로 유지함
+    if len(fin) == 2:
         # print("mast_skill 추가 전: ",fin)
-
         mast_skill = ['1','2','3']
         for skill in fin:
             for mast in mast_skill:
@@ -300,15 +300,16 @@ def cal_skilltree(table,chamName):
                         fin.append(mast)
                         break
 
-    # print("fin: ",fin)
-    # print("str(fin): ",str(fin))
-    if len(fin) == 3:
-        skill_build1,skill_build2,skill_build3 = fin
-    else:
-        print("스킬 빌드가 3자 이상합니다", fin)
+    if len(fin) <= 1:
+        for _ in range(3-len(fin)):
+            fin.append("No skill")
+            # print("1이하의 fin에  None 추가후: ",fin)
+
+    skill_build1, skill_build2, skill_build3 = fin
+
+
     skill_cnt = 0
     skill_win= 0
-    cham_cnt = len(cham_df)
 
     for i in range(len(cham_df)):
         if cham_df['skill_slot'][i] == list(skill_hash)[0] or cham_df['skill_slot'][i] == ''.join(fin):
@@ -317,24 +318,13 @@ def cal_skilltree(table,chamName):
                 skill_win +=1
     result = [skill_build1,skill_build2,skill_build3,
               skill_cnt,round(skill_cnt/cham_cnt,2),round(skill_win/skill_cnt,2)]
+    # print(result)
     return result
-# print(cal_skilltree(classic_df,'LeeSin'))
-# print(cal_skilltree(classic_df,'Zyra'))
+# print(cal_skilltree(cham_df=test_cham_df,cham_cnt=len(test_cham_df)))
 
-# 4. 시작 아이템 빌드
-def cal_item_build(table,chamName):
+# 6. 시작 아이템 빌드
+def cal_item_build(cham_df,cham_cnt):
     all_itembuild = []
-    cham_cnt = 0
-
-    # chamName에 해당하는 로우만 담아주는 df
-    cham_df = pd.DataFrame(columns=columns_list)
-
-    # chamName에 해당하는 table의 rows를 cham_df에 저장
-    for i in range(len(table)):
-        if table['championName'][i] == chamName:
-            n = len(cham_df)
-            cham_df.loc[n] = table.loc[i]
-    # print(chamName,"의 등장 횟수는: ", len(cham_df))
 
     for i in range(len(cham_df)):
         temp = [cham_df['first_pur1'][i],cham_df['first_pur2'][i],
@@ -345,7 +335,7 @@ def cal_item_build(table,chamName):
         if temp not in all_itembuild:
             all_itembuild.append(temp)
 
-    # print("해당 챔피언의 모든 주 룬 세팅의 모든 경우의 수: ", all_itembuild)
+    # print("해당 챔피언의 모든 주 시작아이템의 모든 경우의 수: ", all_itembuild)
     # print("그 개수는: ", len(all_itembuild))
 
     # 조합의 출현 횟수 count를 위한 hash 만들기
@@ -376,8 +366,15 @@ def cal_item_build(table,chamName):
     # print(item_hash[str(list(item_cnt)[0])]) # 1순위 조합만 추출
     # print(item_hash[str(list(item_cnt)[1])])  # 2순위 조합만 추출
 
-    fin_itembuild = [item_hash[str(list(item_cnt)[0])],
+    if len(list(item_cnt)) >= 2:
+        fin_itembuild = [item_hash[str(list(item_cnt)[0])],
                      item_hash[str(list(item_cnt)[1])]]
+    elif len(list(item_cnt)) == 1:
+        fin_itembuild = [None] * 2
+        fin_itembuild[0] = item_hash[str(list(item_cnt)[0])]
+        fin_itembuild[1] = [None] * 8
+    else:
+        return [None] * 22
 
     item_set1_1,item_set1_2,item_set1_3,item_set1_4,item_set1_5,item_set1_6,item_set1_7,item_set1_8 = fin_itembuild[0]
     item_set2_1, item_set2_2, item_set2_3, item_set2_4, item_set2_5, item_set2_6,item_set2_7,item_set2_8 = fin_itembuild[1]
@@ -385,7 +382,6 @@ def cal_item_build(table,chamName):
     item_set2_cnt = 0
     item_set1_win = 0
     item_set2_win = 0
-    cham_cnt = len(cham_df)
 
     for i in range(len(cham_df)):
         temp3 = [cham_df['first_pur1'][i],cham_df['first_pur2'][i],cham_df['first_pur3'][i],
@@ -402,6 +398,12 @@ def cal_item_build(table,chamName):
                 item_set2_win += 1
     # print("item_set1_cnt,item_set2_cnt,item_set1_win,item_set2_win: ", item_set1_cnt,item_set2_cnt,item_set1_win,item_set2_win)
 
+    # division by zero 에러를 막기 위한 더미로 1 cnt 올려주었음
+    if item_set1_cnt == 0:
+        item_set1_cnt +=1
+    if item_set2_cnt == 0:
+        item_set2_cnt +=1
+
     result = [item_set1_1,item_set1_2,item_set1_3,
               item_set1_4,item_set1_5,item_set1_6,item_set1_7,item_set1_8,
               item_set1_cnt,round(item_set1_cnt/cham_cnt,2),round(item_set1_win/item_set1_cnt,2),
@@ -410,24 +412,14 @@ def cal_item_build(table,chamName):
               item_set2_4, item_set2_5, item_set2_6,item_set2_7,item_set2_8,
               item_set2_cnt, round(item_set2_cnt/cham_cnt, 2), round(item_set2_win/item_set2_cnt, 2)
               ]
+    # print(result)
     return  result
-# print(cal_item_build(classic_df,'LeeSin'))
+# print(cal_item_build(cham_df= test_cham_df,cham_cnt=len(test_cham_df)))
 # print(cal_item_build(classic_df,'Zyra'))
 
-# 5. 신발
-def cal_shoes(table,chamName):
+# 7. 신발
+def cal_shoes(cham_df,cham_cnt):
     all_shoes =[]
-    cham_cnt = 0
-
-    # chamName에 해당하는 로우만 담아주는 df
-    cham_df = pd.DataFrame(columns=columns_list)
-
-    # chamName에 해당하는 table의 rows를 cham_df에 저장
-    for i in range(len(table)):
-        if table['championName'][i] == chamName:
-            n = len(cham_df)
-            cham_df.loc[n] = table.loc[i]
-    # print(chamName, "의 등장 횟수는: ", len(cham_df))
 
 
     # 모든 경우의 수 찾기
@@ -451,16 +443,23 @@ def cal_shoes(table,chamName):
     # 내림차순 정렬하기
     shoes_hash = dict(sorted(shoes_hash.items(), key=lambda x: x[1], reverse=True))
     # print("shoes_hash: ", shoes_hash)
-    a = list(shoes_hash)[0]  # shoes_hash값만 list로 만들어 1순위, 2순위만 추출
-    b = list(shoes_hash)[1]
-    # print("최종 값: ",a,b)
+
+    if len(list(shoes_hash)) >= 2:
+        a = list(shoes_hash)[0]  # shoes_hash값만 list로 만들어 1순위, 2순위만 추출
+        b = list(shoes_hash)[1]
+        # print("최종 값: ",a,b)
+    elif len(list(shoes_hash)) == 1:
+        a = list(shoes_hash)[0]
+        b= [None]
+
+    else:
+        return [None] * 8
 
     # ----------------------------------------------------------
     shoes1_cnt = 0   # 신발 표본수
     shoes1_win = 0   # 신발별 승률
     shoes2_cnt = 0
     shoes2_win = 0
-    cham_cnt = len(cham_df)
 
     for i in range(len(cham_df)):
         if cham_df['shoes'][i] == str(a):
@@ -472,26 +471,24 @@ def cal_shoes(table,chamName):
             if cham_df['win'][i] == True:
                 shoes2_win += 1
 
+    # division by zero 에러를 막기 위한 더미로 1 cnt 올려주었음
+    if shoes1_cnt == 0:
+        shoes1_cnt +=1
+    if shoes2_cnt == 0:
+        shoes2_cnt +=1
+
     result = [a,shoes1_cnt,round(shoes1_cnt/cham_cnt,2),round(shoes1_win/shoes1_cnt,2),
               b,shoes2_cnt,round(shoes2_cnt/cham_cnt,2),round(shoes2_win/shoes2_cnt,2)]
+    # print(result)
     return result
-# print(cal_shoes(classic_df,'LeeSin'))
+# print(cal_shoes(cham_df=test_cham_df,cham_cnt=len(test_cham_df)))
 # print(cal_shoes(classic_df,'Zyra'))
 
-# 6. 코어 빌드
-def cal_corebuild(table,chamName):
+# 8. 코어 빌드
+def cal_corebuild(cham_df,cham_cnt):
     all_core = []
 
-    # chamName에 해당하는 로우만 담아주는 df
-    cham_df = pd.DataFrame(columns=columns_list)
-
-    # chamName에 해당하는 table의 rows를 cham_df에 저장
-    for i in range(len(table)):
-        if table['championName'][i] == chamName:
-            n = len(cham_df)
-            cham_df.loc[n] = table.loc[i]
-    print(chamName, "의 등장 횟수는: ", len(cham_df))
-
+    # corebuild조합의 모든 경우의 수 구하기
     for i in range(len(cham_df)):
         temp = [cham_df['core1'][i], cham_df['core2'][i],
                     cham_df['core3'][i], cham_df['core4'][i],
@@ -529,8 +526,17 @@ def cal_corebuild(table,chamName):
 
     core_cnt = dict(sorted(core_cnt.items(), key=lambda x: x[1], reverse=True))
     # print("정렬이 끝난 core_cnt: ", core_cnt)
-
-    core1, core2, core3 = core_hash[str(list(core_cnt)[0])],core_hash[str(list(core_cnt)[1])],core_hash[str(list(core_cnt)[2])]
+    if len(list(core_cnt)) >= 3:
+        core1, core2, core3 = core_hash[str(list(core_cnt)[0])],core_hash[str(list(core_cnt)[1])],core_hash[str(list(core_cnt)[2])]
+    elif len(list(core_cnt)) == 2:
+        core1,core2 = core_hash[str(list(core_cnt)[0])],core_hash[str(list(core_cnt)[1])]
+        core3 = [None] * 6
+    elif len(list(core_cnt)) == 1:
+        core1 = core_hash[str(list(core_cnt)[0])]
+        core2 = [None] * 6
+        core3 = [None] * 6
+    else:
+        return [None] * 27
 
     core1_cnt = 0
     core1_win = 0
@@ -538,7 +544,6 @@ def cal_corebuild(table,chamName):
     core2_win = 0
     core3_cnt = 0
     core3_win = 0
-    cham_cnt = len(cham_df)
 
     # 코어마다 표본수, 점유율, 승률 계산
     for i in range(len(cham_df)):
@@ -564,6 +569,14 @@ def cal_corebuild(table,chamName):
     core3_1, core3_2, core3_3, core3_4, core3_5, core3_6 = core3
 
 
+    # division by zero 에러를 막기 위한 더미로 1 cnt 올려주었음
+    if core1_cnt == 0:
+        core1_cnt +=1
+    if core2_cnt == 0:
+        core2_cnt +=1
+    if core3_cnt == 0:
+        core3_cnt +=1
+
     result = [core1_1, core1_2, core1_3, core1_4, core1_5, core1_6,
               core1_cnt, round(core1_cnt/cham_cnt,2),round(core1_win/core1_cnt,2),
 
@@ -572,8 +585,8 @@ def cal_corebuild(table,chamName):
 
               core3_1, core3_2, core3_3, core3_4, core3_5, core3_6,
               core3_cnt, round(core3_cnt / cham_cnt, 2), round(core3_win / core3_cnt, 2)]
-
+    # print(result)
     return result
 
-# print(cal_corebuild(classic_df,'LeeSin'))
+# print(cal_corebuild(cham_df=cham_df,cham_cnt=len(cham_df))
 # print(cal_corebuild(classic_df,'Zyra'))

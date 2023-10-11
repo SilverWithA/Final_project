@@ -159,6 +159,8 @@ def under_dia(tier_lowCase, collect_cnt):
 
 
 def exe_coll_puuid():
+    """usrinfo DB에 데이터를 모으는 작업을 실행하는 함수"""
+
     # 저장 전 DB 데이터 초기화
     trun_tables(engine_name=engine_Usr)
 

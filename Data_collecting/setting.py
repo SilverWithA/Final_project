@@ -63,3 +63,38 @@ columns_list = ["matchID","win", "gameMode", "summonerName","puuid","teamPositio
                                    "first_pur5","first_pur6","first_pur7","first_pur8",
                                    "skill_slot","bans",
                                    "core1","core2","core3","core4","core5","core6","shoes"]
+
+cham_col_list = ['tier','championName', 'championId', 'teamPosition',
+
+                         'match_cnt','win_cnt','ban_cnt','pick_cnt',
+                         'win_rate', 'ban_rate', 'pick_rate','av_kda',
+
+                         'most_priperk1', 'most_priperk2', 'most_priperk3', 'most_priperk4', 'most_pristyle',
+                         'most_subperk1', 'most_subperk2', 'most_substyle',
+                         'abil_def', 'abil_fle', 'abil_off',
+
+                         'spell1_1', 'spell1_2', 'spell1_cnt', 'spell1_rate', 'spell1_win',
+                         'spell2_1', 'spell2_2', 'spell2_cnt', 'spell2_rate', 'spell2_win',
+
+                         'skill_build1', 'skill_build2', 'skill_build3',
+                         'skill_cnt', 'skill_rate', 'skill_win',
+
+                         'item_set1_1', 'item_set1_2', 'item_set1_3', 'item_set1_4',
+                         'item_set1_5', 'item_set1_6', 'item_set1_7', 'item_set1_8',
+                         'item_set1_cnt', 'item_set1_rate', 'item_set1_win',
+
+                         'item_set2_1', 'item_set2_2', 'item_set2_3', 'item_set2_4',
+                         'item_set2_5', 'item_set2_6', 'item_set2_7','item_set2_8',
+                         'item_set2_cnt', 'item_set2_rate', 'item_set2_win',
+
+                         'shoes1', 'shoes1_cnt', 'shoes1_rate', 'shoes1_win',
+                         'shoes2', 'shoes2_cnt', 'shoes2_rate', 'shoes2_win',
+
+                         'core1_1', 'core1_2', 'core1_3', 'core1_4', 'core1_5', 'core1_6',
+                         'core1_cnt', 'core1_rate', 'core1_win',
+
+                         'core2_1', 'core2_2', 'core2_3', 'core2_4', 'core2_5', 'core2_6',
+                         'core2_cnt', 'core2_rate', 'core2_win',
+
+                         'core3_1', 'core3_2', 'core3_3', 'core3_4', 'core3_5', 'core3_6',
+                         'core3_cnt', 'core3_rate', 'core3_win']

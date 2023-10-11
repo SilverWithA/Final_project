@@ -2,7 +2,6 @@ import requests
 import pandas as pd
 import time
 
-from pymongo import MongoClient
 from setting import *
 from db_functions import *
 
@@ -46,8 +45,6 @@ def call_api(lowCase_tier,mat_list):
         tier_list.append(total_json)  # bulk insert를 위해 list형식에 append함 -> 하나의 collection으로 들어감
 
     return tier_list    # 한 티어에 대한 경기 정보를 모두 담은 list
-
-
 
 def exe_collApiinfo():
 
@@ -95,7 +92,7 @@ def exe_collApiinfo():
 
 
         use_col.drop()         # 콜렉션 비우기
-        print("mat_info의 모든 콜렌션을 비웠습니다.")
+        print("use_col에있는 도큐먼트를 비웠습니다.")
 
         print("lowCase_tier: ", lowCase_tier)  # tier에 해당하는 소문자
 

@@ -4,140 +4,18 @@ from pymongo import MongoClient
 
 from db_functions import *
 from setting import *
+from final_cal_function import *
 
-# < raw_info에서 json을 받아서 정제된 dataframe으로 만들어서 MySQL에 넘기는 코드>
-def table_maker(table_cnt):
-    table_frames = []
-    for i in range(table_cnt):
-        df = pd.DataFrame(columns=["matchId","win", "gameMode", "summonerName","puuid","teamPosition",
-                                   "championName","championId","assists","kills", "deaths",
-                                   "defense","flex","offense",
-                                   "prim1_perk", "prim2_perk", "prim3_perk", "prim4_perk","prim_style",
-                                   "sub1_perk", "sub2_perk", "sub_style",
-                                   "summoner1Id","summoner2Id",
-                                   "first_pur1","first_pur2","first_pur3","first_pur4",
-                                   "first_pur5","first_pur6","first_pur7","first_pur8",
-                                   "skill_slot","bans",
-                                   "core1","core2","core3","core4","core5","core6","shoes"])
-        table_frames.append(df)
-    return table_frames
-
-
-def cal_first_pur(mat_timeline):
-    """게임 유저의 첫 아이템 구매 항목을 수집하여 길이 8의 리스트로 반환
-    아이템 8개를 사지 않았을 때 None값으로 채운다."""
-    first_pur = {}
-    event = mat_timeline['info']['frames'][1]['events']
-
-    for i in range(len(event)):
-        if event[i]['type'] == "ITEM_PURCHASED":  # 이벤트 중 아이템 구매만 선별
-            if str(event[i]['participantId']) not in first_pur:
-                first_pur[str(event[i]['participantId'])] = [event[i]['itemId']]
-            else:
-                first_pur[str(event[i]['participantId'])].append(event[i]['itemId'])
-    return first_pur   # 참가자 넘버와 해시 값임
-def cal_skill_tree(mat_timeline):
-    """한 게임에 대한 전체 유저의 skill_tree를 해시값으로 반환하는 함수"""
-
-
-    frames = mat_timeline['info']['frames']
-    skill_tree = {}
-    for i in range(len(frames)):
-        if frames[i]['events']:
-            for event_num in range(len(frames[i]['events'])):
-                if frames[i]['events'][event_num]['type'] == "SKILL_LEVEL_UP":
-
-                    if str(frames[i]['events'][event_num]['participantId']) not in skill_tree:
-                        skill_tree[str(frames[i]['events'][event_num]['participantId'])] = [frames[i]['events'][event_num]['skillSlot']]
-                    else:
-                        skill_tree[str(frames[i]['events'][event_num]['participantId'])].append(frames[i]['events'][event_num]['skillSlot'])
-
-    return skill_tree
-def parti_skills(skill_tree, parti_num):
-    """parti_num번째 유저의 mast_skills를 문자열로 반환하는 함수. 최대 3자, 1 or 2 or 3으로만 이루어짐"""
-
-    mast_skills = ''
-    skill_cnt = [0, 0, 0]
-    slot_list = skill_tree[str(parti_num+1)]
-    # print("slot_list: ",slot_list)
-
-    for num in range(len(slot_list)):
-
-        if slot_list[num] == 1:
-            skill_cnt[0] += 1
-        elif slot_list[num] == 2:
-            skill_cnt[1] += 1
-        elif slot_list[num] == 4:
-            pass
-        else:
-            skill_cnt[2] += 1
-
-        # print(skill_cnt)
-
-        for n in range(3):
-            if skill_cnt[n] == 3:
-                skill_cnt[n] = 0
-                mast_skills += str(n+1)
-
-    return mast_skills
-
-def make_ban_list(mat_info):
-    """팀벤 정보를 리스트로 반환하는 함수이다"""
-    ban_list = []
-    if mat_info["info"]['gameMode'] == "CLASSIC":  # 칼바람의 경우 팀밴이 없음
-        if len(mat_info['info']['teams'][0]['bans']) == 0:
-            print("클래식 게임 모드에서 백픽을 선택하지 않았습니다.")
-
-        else:
-
-            for b in range(5):
-                ban_list.append(mat_info['info']['teams'][0]['bans'][b]['championId'])
-                ban_list.append(mat_info['info']['teams'][1]['bans'][b]['championId'])
-
-            n1 = len(ban_list)
-            # print("중복 제거 전: ", ban_list)
-            n2 = len(list(set(ban_list)))
-            ban_list = list(set(ban_list))
-
-            for _ in range(n1-n2):
-                ban_list.append(None)
-                # print("중복 제거 후: ", ban_list)
-
-            return ban_list
-
-def search_core_item(core_list,mat_timeline):
-    frames = mat_timeline['info']['frames']
-
-    build_core = {}
-    for i in range(len(frames)):  # events iterate
-        if frames[i]['events']:  # events가 존재하면
-            for event_num in range(len(frames[i]['events'])):  # events의 내부 iterate
-
-                each_event = frames[i]['events'][event_num]
-
-                # build_core에 참가자ID가 없으면 키값 생성해서 []로 값 저장
-                if each_event['type'] == "ITEM_PURCHASED" and each_event['itemId'] in core_list:
-
-                    if str(each_event['participantId']) not in build_core:
-                        build_core[str(each_event['participantId'])] = [each_event['itemId']]
-
-                    else:
-                        build_core[str(each_event['participantId'])].append(each_event['itemId'])
-
-
-    return build_core
-
-
-
+# <raw_info에서 json을 받아서 정제된 dataframe으로 만들어서 MySQL에 넘기는 코드>
 
 
 # mongoDB에서 matchId 정보가 있는 콜렉션 불러와서 - 전처리
-def coll_usrlog(coll_raw,lowCase,schema):
+def coll_usrlog(coll_raw,lowCase):
     Aram_table, Rank_loser, Rank_winner = table_maker(3)
 
     cnt = 0
     columns_list = list(Rank_winner.columns)
-    ban_list = []
+    # print("columns_list: ",columns_list)
 
     for raw_json in coll_raw.find():  # collection 중 하나의 도큐먼트 불러오기
         # print("------------------------------------------")
@@ -147,7 +25,6 @@ def coll_usrlog(coll_raw,lowCase,schema):
                         "first_pur8",
                         "prim2_perk", "prim3_perk", "prim4_perk", "prim_style",
                         "sub1_perk", "sub2_perk", "sub_style",
-                        "sub1_perk", "sub2_perk", "sub_style",
                         "core2", "core3", "core4", "core5", "core6", "shoes"]
 
 
@@ -156,7 +33,7 @@ def coll_usrlog(coll_raw,lowCase,schema):
         print(cnt, "번째 match정보를 가져왔습니다.", mat_info['metadata']['matchId'])
         mat_timeline = raw_json['mat_timeline']  # print(mat_info['info']['participants'][0])
         if mat_timeline['info']['frames'][0]['events'][0]['type'] == "GAME_END":
-            print("조기종료 된 게임입니다.")
+            print(mat_info['metadata']['matchId'],"는 조기종료 된 게임입니다.")
             continue
 
         pur_list = cal_first_pur(mat_timeline)
@@ -176,14 +53,14 @@ def coll_usrlog(coll_raw,lowCase,schema):
 
 
         for i in range(len(mat_info["metadata"]['participants'])):   # participants iterate
-            # print(cnt, "번째 matchID에서",i,"번째 참가자 정보를 수집합니다.")
+            # print(cnt, "번째 matchID에서",i,"번째 참가자 정보를 수집합니다.----------------------------------------")
             data_parti = mat_info['info']['participants']
             # print(data_parti)
             usrplay_info = [None] * len(columns_list)
             # print(data_parti[i])
-
+            
+            # item컬럼들 안에 shoes에 해당하는 코드가 있는지 확인하기 위해 item_list 저장
             item_list = [data_parti[i]["item0"],data_parti[i]["item1"],data_parti[i]["item2"],data_parti[i]["item3"],data_parti[i]["item4"],data_parti[i]["item5"],data_parti[i]["item6"]]
-            use_shoes = []
 
             try:
                 parti_pur = pur_list[str(i+1)]
@@ -200,7 +77,10 @@ def coll_usrlog(coll_raw,lowCase,schema):
                     if str(column) == 'matchId':
                         usrplay_info[idx] = mat_info['metadata'][str(column)]
 
-                    elif str(column) == 'gameDuration' or str(column) == 'gameMode':
+                    elif str(column) in pass_columns:
+                        continue
+
+                    elif str(column) == 'gameMode':
                         usrplay_info[idx] = mat_info["info"][str(column)]
 
                     elif str(column) in ["defense", "flex", "offense"]:
@@ -217,44 +97,28 @@ def coll_usrlog(coll_raw,lowCase,schema):
                             usrplay_info[idx+6] = data_parti[i]['perks']['styles'][0]['selections'][1]['perk'] # sub2_perk
                             usrplay_info[idx+7] = data_parti[i]['perks']['styles'][1]['style']                 # sub_style
 
-
-
-                    elif str(column) == 'totalDamToCham':
-                        usrplay_info[idx] = data_parti[i]['totalDamageDealtToChampions']
-
-                    elif str(column) == 'totalDamTaken':
-                        usrplay_info[idx] = data_parti[i]['totalDamageTaken']
-
-
-                    elif str(column) == 'totalMinionsKilled':
-                        usrplay_info[idx] = data_parti[i]['totalMinionsKilled']
-
-                    elif str(column) == 'totalEnemyJunKilled':
-                        usrplay_info[idx] = data_parti[i]['totalEnemyJungleMinionsKilled']
-
-                    elif str(column) == 'totalAllyJunKilled':
-                        usrplay_info[idx] = data_parti[i]['totalAllyJungleMinionsKilled']
-                    elif str(column) == 'detWardsPlaced':
-                        usrplay_info[idx] = data_parti[i]['detectorWardsPlaced']
-
                     elif str(column) == "first_pur1":
                         for x in range(8):
                             usrplay_info[idx+x] = parti_pur[x]
 
-                    elif str(column) in pass_columns:
-                        continue
-
                     elif str(column) == 'skill_slot':
                         slots = parti_skills(skill_tree=skill_tree, parti_num=i)
+                        # print("mast skill 계산 전: ",skill_tree[str(i+1)])
                         # print(i,"번째 참가자의 skill_slots: ",slots)
+                        if slots == '':
+                            continue
                         usrplay_info[idx] = slots
 
                     elif str(column) == 'bans':
                         try:
                             usrplay_info[idx] = bans_list.pop()
+
                         except:
                             continue
+
                     elif str(column) == 'core1':
+
+                        # 코어가 6개 이하면 None으로 채워 길이를 6개로 맞춤
                         if len(build_core[str(i+1)]) < 6:
                             for x in range(6 - len(build_core[str(i+1)])):
                                 build_core[str(i + 1)].append(None)
@@ -264,13 +128,15 @@ def coll_usrlog(coll_raw,lowCase,schema):
                             usrplay_info[idx + core_num] = build_core[str(i+1)][0+core_num]
 
 
+
                     else:
                         # print("각 참가자의", str(column),"에 대한 정보입니다.")
                         usrplay_info[idx] = data_parti[i][str(column)]
 
 
 
-                except:  #  Exception as e
+                except Exception as e:  #  Exception as e
+                    # print("컬럼 저장 과정에서 문제 발생: ",e)
                     continue
 
 
@@ -281,6 +147,8 @@ def coll_usrlog(coll_raw,lowCase,schema):
             for item in item_list:            # item iterate
                 if item in shoes_list:        # 어떤 item 이 신발 코드라면
                     usrplay_info[-1] = item
+
+            # print("usrplay_info: ",usrplay_info)
 
 
 
@@ -307,7 +175,7 @@ def coll_usrlog(coll_raw,lowCase,schema):
                 print("불러온 usrinfo를 df 저장 실패", e)
                 pass
 
-    print(lowCase,"의 최종 테이블 컬럼 개수는 다음과 같음 =============")
+    print(lowCase,"의 최종 테이블 컬럼 개수는 다음과 같음 =======================================")
     print("Aram: ", len(Aram_table))
     print("Rank_winner: ", len(Rank_winner))
     print("Rank_loser: ", len(Rank_loser))
@@ -315,20 +183,21 @@ def coll_usrlog(coll_raw,lowCase,schema):
     Rank_winner.to_sql(name=str(lowCase+"_win"), con=conn_gam, if_exists='append',index=False)
     Rank_loser.to_sql(name=str(lowCase+"_lose"), con=conn_gam, if_exists='append', index=False)
     Aram_table.to_sql(name=str(lowCase+"_aram"), con=conn_gam, if_exists='append', index=False)
-    print(lowCase,"데이터를 전처리하여 모두 저장하였습니다 =============")
+    print(lowCase,"데이터를 전처리하여 모두 저장하였습니다 =======================================")
 
 def exe_prepro_final():
-
     # gameinfo 에 있는 모든 table 데이터 초기화
     trun_tables(engine_gam)
-    fin_schema = select_db(table_name='chall_win', conn_name=conn_gam)
+
+    # 임시로 스키마 하나를 불러오기
+    # fin_schema = select_db(table_name='chall_win', conn_name=conn_gam)
 
     # raw_coll와 lowCase는 setting.py에서 설정
-    for i in range(1):  # raw_info의 collections iterate  # len(raw_coll)
+    for i in range(len(raw_coll)):  # raw_info의 collections iterate  # len(raw_coll)
 
         print("전처리 할 티어는 ", lowCase[i], "입니다.===========================================")
         # coll_raw = 사용할 collection 지정 / # lowCase = 수집할 티어의 소문자
-        coll_usrlog(coll_raw=raw_coll['bro'], lowCase='bro', schema=fin_schema)
+        coll_usrlog(coll_raw=raw_coll[str(lowCase[i])], lowCase=lowCase[i])
         # coll_usrlog(coll_raw=raw_coll[str(lowCase[i])], lowCase=lowCase[i],schema = fin_schema)
 
 

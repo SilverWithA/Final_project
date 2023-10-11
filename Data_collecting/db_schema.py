@@ -12,8 +12,8 @@ def create_usrinfo():
         table_name = lowCase[i] + "_usrinfo"
         with engine_Usr.begin() as connection:
             connection.execute(text('CREATE TABLE {}('
-                                    'summonerName varchar(18) NOT NULL,'
-                                    'puuid varchar(255) NOT NULL);'.format(table_name)))
+                                    'summonerName varchar(18),'
+                                    'puuid varchar(255);'.format(table_name)))
 
 def create_gameinfo_old():
     for i in range(len(lowCase)):
@@ -173,11 +173,11 @@ def create_chaminfo():
             with engine_cham.begin() as connection:
                 connection.execute(text('CREATE TABLE {}('
                                         'tier varchar(5),'
-                                        'championName varchar(10),'
+                                        'championName varchar(255),'
                                         'championId varchar(10),'
                                         'teamPosition varchar(10),'
                                         
-                                        'total_cnt int(10),'        # 전체 게임
+                                        'match_cnt int(10),'        # 전체 게임
                                         'win_cnt int(10),'
                                         'ban_cnt int(10),'
                                         'pick_cnt int(10),'
@@ -219,7 +219,7 @@ def create_chaminfo():
                                         'skill_cnt int(10),'
                                         'skill_rate float(4),'
                                         'skill_win float(4),'
-                                        ''
+                                       
                                         'item_set1_1 varchar(255),'
                                         'item_set1_2 varchar(255),'
                                         'item_set1_3 varchar(255),'
