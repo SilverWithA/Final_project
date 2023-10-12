@@ -63,7 +63,6 @@ def puuid_Chall(collect_cnt):
     # MySQL의 저장하기
     playerinfo_df.to_sql(name='chall_usrinfo', con=conn_Usr, if_exists='append',index=False)
     print("chall_usrinfo Table에 데이터를 저장하였습니다.")
-
 def puuid_grand(collect_cnt):
     """grandmaster의 닉네임과 puuid를 불러와 저장하는 함수"""
 
@@ -110,7 +109,6 @@ def puuid_mast(collect_cnt):
     # MySQL의 저장하기
     playerinfo_df.to_sql(name='mast_usrinfo', con=conn_Usr, if_exists='append', index=False)
     print("mast_usrinfo Table에 데이터를 저장하였습니다.")
-
 def under_dia(tier_lowCase, collect_cnt):
     """다이아 이하의 티어별 사용자의 닉네임과 puuid를 수집합니다"""
     print(tier_lowCase,"티어의 usrinfo를 조회합니다--------------------------------------------")
@@ -155,9 +153,6 @@ def under_dia(tier_lowCase, collect_cnt):
     playerinfo_df.to_sql(name=save_name, con=conn_Usr, if_exists='append', index=False)
 
     print(save_name,"Table에 데이터를 저장하였습니다.")
-
-
-
 def exe_coll_puuid():
     """usrinfo DB에 데이터를 모으는 작업을 실행하는 함수"""
 
@@ -180,4 +175,4 @@ def exe_coll_puuid():
 
 
 # 함수 실행
-exe_coll_puuid()
+# exe_coll_puuid()
