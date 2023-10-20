@@ -14,7 +14,6 @@ def create_usrinfo():
             connection.execute(text('CREATE TABLE {}('
                                     'summonerName varchar(18),'
                                     'puuid varchar(255);'.format(table_name)))
-
 def create_gameinfo_old():
     for i in range(len(lowCase)):
         for j in range(3):
@@ -161,17 +160,16 @@ def create_gameinfo_new():
                                         'core6 varchar(255),'
 
                                         'shoes varchar(255));'.format(table_name)))
-
 def create_chaminfo():
-    for i in range(len(lowCase)):
-        for j in range(2):
-            if j == 0:
-                table_name = lowCase[i]+"_cham"
-            else:
-                table_name = lowCase[i] + "_archam"
+    for i in range(len(lowCase)+1):
+        if i == len(lowCase):
+            print("aram 정보 스키마를 저장합니다.")
+            table_name = "total_archam"
+        elif i < len(lowCase):
+            table_name = lowCase[i]+"_cham"
 
-            with engine_cham.begin() as connection:
-                connection.execute(text('CREATE TABLE {}('
+        with engine_cham.begin() as connection:
+            connection.execute(text('CREATE TABLE {}('
                                         'tier varchar(5),'
                                         'championName varchar(255),'
                                         'championId varchar(10),'
@@ -286,9 +284,9 @@ def create_chaminfo():
 
 
 
-# create_gameinfo()
+create_usrinfo()
 # create_gameinfo()
 # create_gameinfo_new()
-create_chaminfo()
+# create_chaminfo()
 print("성공적으로 테이블 스키마가 만들어 졌습니다.")
-conn_gam.close()
+# conn_gam.close()

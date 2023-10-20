@@ -93,8 +93,8 @@ def coll_usrlog(coll_raw,lowCase):
                             usrplay_info[idx+2] = data_parti[i]['perks']['styles'][0]['selections'][2]['perk'] # 'prim3_perk'
                             usrplay_info[idx+3] = data_parti[i]['perks']['styles'][0]['selections'][3]['perk'] #  prim4_perk
                             usrplay_info[idx+4] = data_parti[i]['perks']['styles'][0]['style']                 # prim_style
-                            usrplay_info[idx+5] = data_parti[i]['perks']['styles'][0]['selections'][0]['perk'] # sub1_perk
-                            usrplay_info[idx+6] = data_parti[i]['perks']['styles'][0]['selections'][1]['perk'] # sub2_perk
+                            usrplay_info[idx+5] = data_parti[i]['perks']['styles'][1]['selections'][0]['perk'] # sub1_perk
+                            usrplay_info[idx+6] = data_parti[i]['perks']['styles'][1]['selections'][1]['perk'] # sub2_perk
                             usrplay_info[idx+7] = data_parti[i]['perks']['styles'][1]['style']                 # sub_style
 
                     elif str(column) == "first_pur1":
@@ -201,4 +201,4 @@ def exe_prepro_final():
         # coll_usrlog(coll_raw=raw_coll[str(lowCase[i])], lowCase=lowCase[i],schema = fin_schema)
 
 
-exe_prepro_final()
+# exe_prepro_final()

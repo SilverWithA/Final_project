@@ -92,9 +92,9 @@ def exe_collApiinfo():
 
 
         use_col.drop()         # 콜렉션 비우기
-        print("use_col에있는 도큐먼트를 비웠습니다.")
+        print(lowCase_tier, "에 해당하는 rawinfo 콜렉션을 비웠습니다.")
 
-        print("lowCase_tier: ", lowCase_tier)  # tier에 해당하는 소문자
+        # print("lowCase_tier: ", lowCase_tier)  # tier에 해당하는 소문자
 
         # 조회할 때 사용할 티어별 모든 matchID 리스트에 저장하기
         mat_list = list(tier_mat[i][str(key_names[i])])  # list(tier_mat[i][str(key_names[i])])
@@ -108,5 +108,5 @@ def exe_collApiinfo():
         use_col.insert_many(info_list)
         print(lowCase_tier,"_total collection에 데이터를 저장했습니다.")
 
-exe_collApiinfo()
+# exe_collApiinfo()
 

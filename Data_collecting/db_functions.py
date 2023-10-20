@@ -4,9 +4,6 @@ from sqlalchemy import create_engine
 from sqlalchemy import text
 
 
-
-
-
 # [0]. DB 연결 설정
 # MySQL ----------------------------------------------------------------
 # 1. usrinfo
@@ -50,6 +47,8 @@ def show_tables(engine_name):
     convert = [list(tables[x]) for x in range(len(tables))]
     # print(convert[0][0])   # 인덱싱
     return convert
+
+
 
 # 2. 이미 DB에 있는 정보 삭제하여 테이블 비우기: truncate
 def trun_tables(engine_name):

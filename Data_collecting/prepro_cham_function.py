@@ -20,7 +20,7 @@ for i in range(len(classic_df)):
     if classic_df['championName'][i] not in chamID_hash:
         chamID_hash[str(classic_df['championName'][i])] = classic_df['championId'][i]
 
-    if classic_df['championName'][i] == 'Aphelios':
+    if classic_df['championName'][i] == 'Aphelios' and classic_df['gameMode'][i]=='CLASSIC':
         n = len(test_cham_df)
         test_cham_df.loc[n] = classic_df.loc[i]
 
@@ -185,6 +185,7 @@ def cal_spell(cham_df,cham_cnt):
     # 모든 조합 경우의 수 찾기
     for i in range(len(cham_df)):
         temp = [cham_df['summoner1Id'][i],cham_df['summoner2Id'][i]]
+        temp.sort()
         if temp not in spell_combin:
             spell_combin.append(temp)
 
@@ -203,6 +204,7 @@ def cal_spell(cham_df,cham_cnt):
 
     for i in range(len(cham_df)):
         temp2 = [cham_df['summoner1Id'][i], cham_df['summoner2Id'][i]]
+        temp2.sort()
 
         for combin in spell_combin:
             if temp2 == combin:
@@ -239,7 +241,15 @@ def cal_spell(cham_df,cham_cnt):
             spell1_cnt +=1
             if cham_df['win'][i] == True:
                 spell1_win += 1
-        elif cham_df['summoner1Id'][i] == spell2_1 and cham_df['summoner2Id'][i] == spell2_2:
+        if cham_df['summoner2Id'][i] == spell1_1 and cham_df['summoner1Id'][i] == spell1_2:
+            spell1_cnt +=1
+            if cham_df['win'][i] == True:
+                spell1_win += 1
+        if cham_df['summoner1Id'][i] == spell2_1 and cham_df['summoner2Id'][i] == spell2_2:
+            spell2_cnt += 1
+            if cham_df['win'][i] == True:
+                spell2_win += 1
+        if cham_df['summoner2Id'][i] == spell2_1 and cham_df['summoner1Id'][i] == spell2_1:
             spell2_cnt += 1
             if cham_df['win'][i] == True:
                 spell2_win += 1

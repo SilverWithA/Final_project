@@ -49,7 +49,7 @@ def puuid_Chall(collect_cnt):
     r = requests.get(challen_url)
 
     callen_count = len(r.json()["entries"])
-    print("챌린저 거주 인구 수: ", callen_count)
+    # print("챌린저 거주 인구 수: ", callen_count)
 
 
     # puuid 조회를 위해 모든 닉네임 summonerNames에 임시로 닉네임 저장
@@ -155,9 +155,10 @@ def under_dia(tier_lowCase, collect_cnt):
     print(save_name,"Table에 데이터를 저장하였습니다.")
 def exe_coll_puuid():
     """usrinfo DB에 데이터를 모으는 작업을 실행하는 함수"""
-
+    print("티어별 닉네임과 puuid를 불러오는 작업을 시작합니다.")
     # 저장 전 DB 데이터 초기화
     trun_tables(engine_name=engine_Usr)
+    print("모든 usrinfo 데이터가 truncate 되었습니다.--------------------------")
 
     # 티어 순서대로 데이터 불러오기 -> 저장하기
     puuid_Chall(tier_cnt['chall'])
@@ -170,8 +171,8 @@ def exe_coll_puuid():
                   collect_cnt=tier_cnt[lowCase[i+3]])
 
     # 완료
-    print("모든 usrinfo 데이터가 저장되었습니다 ----------fin---------")
-    conn_Usr.close()
+    print("모든 usrinfo 데이터가 저장되었습니다 -----------------fin----------------")
+
 
 
 # 함수 실행

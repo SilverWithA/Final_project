@@ -1,9 +1,11 @@
 import pandas as pd
+
 from setting import *
 from db_functions import *
-from prepro_cal_function import *
-table_list = show_tables(engine_gam)
-aram_df = select_db(table_list[0][0],conn_name=conn_gam)
+from prepro_cham_function import *
+
+# table_list = show_tables(engine_gam)
+# aram_df = select_db(table_list[0][0],conn_name=conn_gam)
 
 def collect_classic(lowCase,table,save_name):
     """iterate_perTier()안에 들어가는 전처리 함수1"""
@@ -65,9 +67,6 @@ def collect_classic(lowCase,table,save_name):
             if is_exist == 1:
                 continue
 
-
-
-
             ban_cnt = 0
             championId = chamID_hash[str(chamName)]
             cham_df = pd.DataFrame(columns=columns_list)
@@ -81,7 +80,7 @@ def collect_classic(lowCase,table,save_name):
                     ban_cnt += 1
 
                 # cham_df chamName에 해당하는 모든 데이터 올리기
-                if table['championName'][i] == chamName and table['teamPosition'][i] == position:
+                if table['championName'][i] == chamName and table['teamPosition'][i] == position and table['gameMode'][i]=='CLASSIC':
                     n = len(cham_df)
                     cham_df.loc[n] = table.loc[i]
 
@@ -102,6 +101,8 @@ def collect_classic(lowCase,table,save_name):
             ban_rate = round(ban_cnt/match_cnt,4)
             # print("밴율은: ", ban_rate)
 
+
+            # 픽률 = 픽 경기 수/ 전체 경기 수
             pick_rate = round(cham_cnt/match_cnt,4)
             # print("픽률은: ",pick_rate)
 
@@ -192,10 +193,10 @@ def collect_classic(lowCase,table,save_name):
 
             # 모든 연산이 끝나면 임시저장한 df를 table로 저장
             table_schema.to_sql(name=str(save_name), con=conn_cham, if_exists='append', index=False)
+            conn_cham.commit()
             # print("insert 쿼리가 실행되었습니다.")
 # collect_classic('bro',table=classic_df,save_name='bro_cham')
-
-def collect_aram(lowCase,table,save_name):
+def collect_aram(table,save_name):
     """iterate_perTier()안에 들어가는 전처리 함수2"""
 
     # 연산이 돌아가기 전 존재하는 데이터이면 연산 x continue 하기 위해 이미 저장된 데이터를 불러온다
@@ -247,7 +248,7 @@ def collect_aram(lowCase,table,save_name):
 
         # 챔피언 등장이 없으면 다음 챔피언으로 넘어가기
         if cham_cnt == 0:
-            print(lowCase, "티어에서", chamName, "이 픽된 해당하는 게임 정보가 없습니다. 다음 챔피언 정보 연산을 위해 넘어갑니다.")
+            print(chamName, "이 픽된 해당하는 게임 정보가 없습니다. 다음 챔피언 정보 연산을 위해 넘어갑니다.")
             continue
 
         pick_rate = round(cham_cnt /match_cnt, 4)
@@ -294,7 +295,7 @@ def collect_aram(lowCase,table,save_name):
              core3_cnt, core3_rate, core3_win) = cal_corebuild(cham_df, cham_cnt)
 
             # df에 저장을 위한 리스트 insert의 value 부분
-        data_list = [lowCase, chamName, None, None,
+        data_list = [None, chamName, None, None,
 
                          match_cnt, win_cnt, None, cham_cnt,
                          win_rate, None, pick_rate, av_kda,
@@ -335,24 +336,22 @@ def collect_aram(lowCase,table,save_name):
         # table_schema df에 데이터 임시저장
         table_schema = pd.DataFrame(columns=cham_col_list)
         table_schema.loc[0] = data_list
+        # print(table_schema)
 
         # 모든 연산이 끝나면 임시저장한 df를 table로 저장
         table_schema.to_sql(name=str(save_name), con=conn_cham, if_exists='append', index=False)
+        saved_table = select_db(table_name=str(save_name), conn_name=conn_cham)
+        conn_cham.commit()
+        # print(saved_table)
         # print("insert 쿼리가 실행되었습니다.")
-# collect_aram(lowCase='bro',table=aram_df,save_name='bro_archam')
+        # break
 
 def iterate_perTier(lowCase,final_tables):  #  collect_classic()보다 먼저 실행되는 함수
-
-
     # DB속 테이블 불러와 변수에 저장하기
     for j in range(len(final_tables)): # iterate all gameinfo tables
         tableName = final_tables[j][0]
 
-
         if tableName[:len(lowCase)] == lowCase:
-            if tableName[-1:] == 'm':       # 칼바람 정보 테이블
-                aram_table = select_db(tableName, conn_gam)
-                print(tableName,"정보를 불러와 aram_table 변수에 할당했습니다.")
             if tableName[-1:] == 'n':        # 승자 정보 테이블
                 win_table = select_db(tableName,conn_gam)
                 print(tableName, "정보를 불러와 win_table 변수에 할당했습니다.")
@@ -360,32 +359,42 @@ def iterate_perTier(lowCase,final_tables):  #  collect_classic()보다 먼저 �
                 lose_table = select_db(tableName, conn_gam)
                 print(tableName, "정보를 불러와 lose_table 변수에 할당했습니다.")
 
-
     # outer join 수행
     classic_table = pd.merge(win_table,lose_table,how='outer')
 
-    print(lowCase,"티어의 aram 게임에 대한 챔피언 정보를 저장합니다.=============================================================================")
-    collect_aram(lowCase=lowCase, table=aram_table, save_name=str(lowCase) + "_archam")
     print(lowCase,"티어의 classic 게임에 대한 챔피언 정보를 저장합니다.=============================================================================")
     collect_classic(lowCase=lowCase, table= classic_table,save_name = str(lowCase)+"_cham")
 
 
-# collect_aram(lowCase=lowCase, table=aram_table, save_name = str(lowCase)+"_archam")
 def exe_prepro_cham():
-
-    # 데이터 불러오기# 1. MySQL에서 최종 테이블 불러오기
+    # 데이터 불러오기
+    # 1. MySQL에서 최종 테이블 불러오기
     final_tables = show_tables(engine_gam)
-    # print(final_tables)
 
     # chaminfo DB의 모든 테이블 데이터 날리고 스키마만 남기기
     # trun_tables(engine_name=engine_cham)
 
 
-    # 티어별 데이터 dataframe으로 불러와 저장하기
+    # classic 게임: 티어별 데이터 dataframe으로 불러와 저장하기
     for t in range(len(lowCase)):  # iterate all tiers
         # 티어별 gameinfo테이블을 불러오기 위한 함수
         iterate_perTier(lowCase=lowCase[t],final_tables=final_tables)
-        print(lowCase[t],"티어의 모든 champion 정보를 저장했습니다.============================================================")
+        print(lowCase[t],"티어의 모든 classic게임의 champion 정보를 저장했습니다.============================================================")
+
+    # Aram 게임: 티어별 데이터 dataframe으로 불러와 저장하기
+    merge_df = pd.DataFrame(columns=columns_list)
+    for i in range(len(final_tables)):
+        tableName = final_tables[i][0]
+
+        if tableName[-1:] == 'm':  # 칼바람 정보 테이블
+            aram_table = select_db(tableName, conn_gam)
+            # print(tableName,"의 길이: ",len(aram_table))
+            merge_df = pd.merge(aram_table, merge_df, how='outer')
+            print(tableName, "의 정보를 merge_df와 합쳤습니다.")
+    print("merge_df의 데이터 개수는: ", len(merge_df))
+
+    # print(aram 게임에 대한 챔피언 정보를 저장합니다.=============================================================================")
+    collect_aram(table=merge_df, save_name="total_archam")
 
 # trun_tables(engine_name=engine_cham)
-exe_prepro_cham()
+# exe_prepro_cham()

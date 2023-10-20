@@ -49,7 +49,6 @@ def collect_matchID(select_df,lowCase_tier):
     print(lowCase_tier, " 의 MatchID를 도큐먼트로 보내기위해 딕셔너리 타입으로 변환하였습니다.")
     return mat_doc
 
-
 # 4. 저장 과정 실행히줄 함수 정의
 def exe_collMatchId(coll_mat):
     coll_mat.drop()  # 콜렉션 비우기
@@ -65,14 +64,16 @@ def exe_collMatchId(coll_mat):
         lowCase_tier = str(UsrPerTier[i][0])[:-8]
 
         # 데이터프레임으로 받아온 정보를 기반으로 api에서 matchID 조회
+
         mat_doc = collect_matchID(usr_df,lowCase_tier)
+
 
         # 조회한 matchID를 딕셔너리 형태(mat_doc)으로 만들어 MongoDB로 쏴준다
         # 티어별로 하난의 도큐먼트가 만들어지고 해당 티어의 경기코드가 전부 value값으로 들어간다
         result = coll_mat.insert_one(mat_doc)   # 콜랙션에 티어별 도큐먼트 insert
         print(lowCase_tier,"가 MongDB에 저장됐습니다.")
 
-exe_collMatchId(coll_mat)
+# exe_collMatchId(coll_mat)
 
 
 
