@@ -122,3 +122,5 @@
 </details>
 
 [발표 자료 보러가기](./IMG/Final_Project_ppt_복사본.pdf)
+
+[발표 영상 보러가기](https://www.youtube.com/watch?v=qtjvRxQwo7I)
