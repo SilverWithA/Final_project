@@ -66,7 +66,7 @@
 	<img src ="https://img.shields.io/badge/Airflow-017CEE?style=flat&logo=Apache%20Airflow&logoColor=white" />
 </div>
 
-<h2>프로젝트 기간 : 2023.08.21 ~ 2023.10.24</h2>
+<h1>프로젝트 기간 : 2023.08.21 ~ 2023.10.24</h1>
 <details>
 	<summary><b>일정 로드맵</b></summary>
 	  <div markdown="1">
@@ -78,15 +78,32 @@
 
 <h1>프로젝트 개요</h1>
 <details>
-	<summary><b>프로젝트 개요</b></summary>
+	<summary><b>프로젝트 소개</b></summary>
 	  <div markdown="1">
+		  <br>
 		  <ul>
 		<img src ="./IMG/개요.png">
 			  <li>
-				  실제 사용자의 불편함이 서비스 개요의 시발점이 되었다.
+				실제 사용자의 불편함이 서비스 개요의 시발점이 되었다.
 			  </li>
 			  <li>
-				  게임 이용 초기 설정시 빠르고 정확한 데이터 전달이 프로젝트의 큰 레이아웃이 되었다.
+				게임 이용 초기 설정시 빠르고 정확한 데이터 전달이 프로젝트의 큰 레이아웃이 되었다.
+			  </li>
+		  </ul>
+</div>
+</details>
+
+<details>
+	<summary><b>서비스 시나리오</b></summary>
+	  <div markdown="1">
+		  <br>
+		  <ul>
+		<img src ="./IMG/서비스 시나리오.png">
+			  <li>
+				  기존 정보 제공 사이트의 경우 방대한 정보로 인하여 페이지 이동이 잦아 정보 확인에 불편함이 존재함
+			  </li>
+			  <li>
+				  이러한 불편함을 최소화 하고자 로그인시 개인 설정이 유지 가능한 위젯 페이지를 만듬듬
 			  </li>
 		  </ul>
 </div>
