@@ -19,7 +19,7 @@
         <img src="https://avatars.githubusercontent.com/u/132039559?v=4" width="100px;" alt=""/>
         <br />
         <sub>
-          <b>이상훈</b>
+          <b>hoonscucci</b>
         </sub>
       </a>
       <br/>
