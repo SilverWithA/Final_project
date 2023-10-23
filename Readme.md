@@ -66,3 +66,13 @@
 	<img src ="https://img.shields.io/badge/Airflow-017CEE?style=flat&logo=Apache%20Airflow&logoColor=white" />
 </div>
 
+<h2>프로젝트 기간 : 2023.08.21 ~ 2023.10.24</h2>
+
+![로드맵](https://github.com/SilverWithA/Final_project/assets/132039559/98625d11-dddf-48e2-9d0c-fb3aa2bd5647)
+
+<h1>프로젝트 개요</h1>
+
+![개요](https://github.com/SilverWithA/Final_project/assets/132039559/1e218fb7-ad3e-48a3-8bb9-ebd69dfa92d6)
+
+* 실제 사용 유저들이 느꼈던 불편함이 프로젝트의 출발점 이였다.
+* 
