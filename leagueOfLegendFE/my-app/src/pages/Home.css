@@ -1,0 +1,147 @@
+@font-face {
+    font-family: 'omyu_pretty';
+    src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
+    font-weight: normal;
+    font-style: normal;
+  }
+
+.container {
+    position: absolute;
+}
+
+.image-container {
+   position: absolute;
+   width: 113%;
+   height: auto;
+}
+
+.widget-container {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 105%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+.noname {
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    padding: 10px;
+}
+
+.widgetOne {
+    background-color: white;
+    width: 49%;
+    height: 80%;
+    float: left;
+    margin-right: 1%;
+    margin-left: 1%;
+    overflow: auto;
+    border-radius: 5px;
+}
+
+.widgetTwo {
+    background-color: white;
+    width: 49%;
+    height: 80%;
+    float: right;
+    margin-left: 1%;
+    margin-right: 1%;
+    overflow: auto;
+    border-radius: 5px;
+}
+
+.widgetNotLogin1 {
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 47%;
+    height: 80%;
+    float: left;
+    margin-right: 1%;
+    color: white;
+    border-radius: 5px;
+    font-size: 30px;
+    text-align: center;
+    font-family: 'omyu_pretty', sans-serif;
+    
+}
+
+.widgetNotLogin2 {
+    background-color: rgba(0, 0, 0, 0.7);
+    width: 47%;
+    height: 80%;
+    float: right;
+    margin-left: 1%;
+    color: white;
+    border-radius: 5px;
+    font-size: 30px;
+    text-align: center;
+    font-family: 'omyu_pretty', sans-serif;
+}
+
+.widgetNotLogin3 {
+    margin-top: 40%;
+    height: 40%;
+    font-size: 30px;
+    font-family: 'omyu_pretty', sans-serif;
+    
+}
+
+.noname {
+    font-family: 'omyu_pretty', sans-serif;
+    font-size: 30px
+}
+
+.widgetOneButton {
+    position: absolute;
+    left: 13%;
+    top: 4%;
+    z-index: 1;
+    font-family: 'omyu_pretty', sans-serif;
+    
+    
+}
+
+.widgetOneButton button {
+    border:none;
+    /* text-align: center; 텍스트를 가운데 정렬합니다. */
+    background-color: #fff; /* 버튼 배경색 지정 */
+    color: #000000; /* 텍스트 색상 지정 */
+    padding: 10px 15px;
+    border: 1px solid #b2adad;
+    border-radius: 4px;
+    font-size: 16px;
+    width: auto;
+    height: auto;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+
+}
+
+.widgetTwoButton {
+    position: absolute;
+    top: 4%;
+    margin-left: 12%;
+    z-index: 1;
+    font-family: 'omyu_pretty', sans-serif;
+   
+
+}
+
+.widgetTwoButton button {
+      border:none;
+    /* text-align: center; 텍스트를 가운데 정렬합니다. */
+    background-color: #fff; /* 버튼 배경색 지정 */
+    color: #000000; /* 텍스트 색상 지정 */
+    padding: 10px 15px;
+    border: 1px solid #b2adad;
+    border-radius: 4px;
+    font-size: 16px;
+    width: auto;
+    height: auto;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
