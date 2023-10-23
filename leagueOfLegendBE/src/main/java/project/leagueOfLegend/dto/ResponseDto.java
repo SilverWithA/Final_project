@@ -6,16 +6,18 @@ import lombok.Data;
 @Data
 @AllArgsConstructor(staticName = "set")
 public class ResponseDto<D> {
-    private boolean result;
-    private String message;
-    private D data;
+    public String message;
+
+    public D data;
+    public boolean result;
 
     public static <D> ResponseDto<D> setSuccess(String message, D data) {
-        return ResponseDto.set(true, message, data);
+        return ResponseDto.set(message, data, true);
 
     }
     public static <D> ResponseDto<D> setFailed(String message) {
-        return ResponseDto.set(false, message, null);
+
+        return ResponseDto.set(message, null, false);
     }
 
 }

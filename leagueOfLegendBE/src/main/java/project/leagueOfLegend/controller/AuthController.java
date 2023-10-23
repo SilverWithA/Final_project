@@ -10,6 +10,7 @@ import project.leagueOfLegend.service.AuthService;
 
 @RestController
 @RequestMapping("api/auth")
+@CrossOrigin(origins = "http://52.79.230.210/:3000")
 public class AuthController {
     @Autowired
     AuthService authService;

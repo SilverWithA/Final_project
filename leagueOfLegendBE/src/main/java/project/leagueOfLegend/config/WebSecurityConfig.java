@@ -1,5 +1,6 @@
 package project.leagueOfLegend.config;
 
+import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -8,14 +9,36 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.web.SecurityFilterChain;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
+import org.springframework.stereotype.Component;
+import org.springframework.web.cors.CorsConfiguration;
+import org.springframework.web.cors.CorsConfigurationSource;
+import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import project.leagueOfLegend.filter.JwtAuthenticationFilter;
 
 @Configuration
 @EnableWebSecurity
+@RequiredArgsConstructor
+@Component
 public class WebSecurityConfig {
 
     @Autowired
     JwtAuthenticationFilter jwtAuthenticationFilter;
+
+    @Bean
+    public CorsConfigurationSource corsConfigurationSource() {
+        CorsConfiguration config = new CorsConfiguration();
+
+        config.addAllowedOrigin("http://localhost:3000"); // 로컬
+        config.addAllowedOrigin("http://52.79.230.210:3000"); // 프론트 IPv4 주소
+        config.addAllowedMethod("*"); // 모든 메소드 허용.
+        config.addAllowedHeader("*");
+        config.setAllowCredentials(true);
+
+        UrlBasedCorsConfigurationSource source = new UrlBasedCorsConfigurationSource();
+        source.registerCorsConfiguration("/**", config);
+        return source;
+    }
+
 
     @Bean
     protected SecurityFilterChain configure(HttpSecurity httpSecurity) throws Exception{
@@ -37,8 +60,10 @@ public class WebSecurityConfig {
 //                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests.requestMatchers("/","/api/auth/**")
 //                .authorizeHttpRequests((authorizeHttpRequests) -> authorizeHttpRequests.requestMatchers("/","/api/auth/**")
 //                        .permitAll().anyRequest().authenticated());
-                .authorizeRequests().antMatchers("/", "/api/auth/**","/api/widget/**").permitAll()
-                .anyRequest().authenticated();
+                .authorizeRequests().antMatchers("/", "/api/auth/**","/api/widget/**","/api/classic/**","/api/aram/**").permitAll()
+                .anyRequest().authenticated().and()
+                .addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
+
 
 
                 // 나머지 Request에 대해서는 모두 인증된 사용자만 사용 가능하게 함

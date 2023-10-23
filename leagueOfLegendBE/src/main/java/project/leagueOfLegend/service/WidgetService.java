@@ -2,8 +2,7 @@ package project.leagueOfLegend.service;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-import project.leagueOfLegend.dto.WidgetOneDto;
-import project.leagueOfLegend.dto.WidgetTwoDto;
+import project.leagueOfLegend.dto.*;
 import project.leagueOfLegend.entity.User;
 import project.leagueOfLegend.entity.WidgetOne;
 import project.leagueOfLegend.entity.WidgetTwo;
@@ -19,59 +18,65 @@ public class WidgetService {
     private final UserRepository userRepository;
     private final WidgetTwoRepository widgetTwoRepository;
 
-    public WidgetOne updateWidgetOne(WidgetOneDto dto) {
+    public ResponseDto<WidgetResponseDto> updateWidgetOne(WidgetOneDto dto) {
         String userId = dto.getUserId();
         String columnName = dto.getColumnName();
-        boolean newValue = dto.isNewValue();
+
+
+//        User user = User.builder().userId(userId).build();
+
 
         User user = userRepository.findByUserId(userId);
         WidgetOne widgetOne = this.widgetOneRepository.findByUser(user);
 
         switch (columnName) {
             case "Classic_An":
-                widgetOne.setClassic_An(newValue);
+                widgetOne.setClassic_An(true);
                 break;
             case "Classic_Ti":
-                widgetOne.setClassic_Ti(newValue);
+                widgetOne.setClassic_Ti(true);
                 break;
             case "Aram_An":
-                widgetOne.setAram_An(newValue);
+                widgetOne.setAram_An(true);
                 break;
             case "Aram_Ti":
-                widgetOne.setAram_Ti(newValue);
+                widgetOne.setAram_Ti(true);
                 break;
             default:
                 throw new IllegalArgumentException("올바르지 않습니다.");
         }
-        return widgetOneRepository.save(widgetOne);
-    }
+        widgetOneRepository.save(widgetOne);
+        WidgetResponseDto widgetResponseDto = new WidgetResponseDto(userId, columnName);
+        return ResponseDto.setSuccess("위젯1 변경 성공", widgetResponseDto);
+ }
 
-
-    public WidgetTwo updateWidgetTwo(WidgetTwoDto dto) {
+    public ResponseDto<WidgetResponseDto> updateWidgetTwo(WidgetTwoDto dto) {
         String userId = dto.getUserId();
         String columnName = dto.getColumnName();
-        boolean newValue = dto.isNewValue();
 
         User user = userRepository.findByUserId(userId);
+
         WidgetTwo widgetTwo = this.widgetTwoRepository.findByUser(user);
 
         switch (columnName) {
             case "Classic_An":
-                widgetTwo.setClassic_An(newValue);
+                widgetTwo.setClassic_An(true);
                 break;
             case "Classic_Ti":
-                widgetTwo.setClassic_Ti(newValue);
+                widgetTwo.setClassic_Ti(true);
                 break;
             case "Aram_An":
-                widgetTwo.setAram_An(newValue);
+                widgetTwo.setAram_An(true);
                 break;
             case "Aram_Ti":
-                widgetTwo.setAram_Ti(newValue);
+                widgetTwo.setAram_Ti(true);
                 break;
             default:
                 throw new IllegalArgumentException("올바르지 않습니다.");
         }
-        return widgetTwoRepository.save(widgetTwo);
+        widgetTwoRepository.save(widgetTwo);
+        WidgetResponseDto widgetResponseDto = new WidgetResponseDto(userId, columnName);
+        return ResponseDto.setSuccess("위젯2 변경 성공", widgetResponseDto);
     }
 
     }

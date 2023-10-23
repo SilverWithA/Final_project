@@ -7,7 +7,7 @@ import lombok.NoArgsConstructor;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-public class WidgetTwoDto {
+public class WidgetResponseDto {
     private String userId;
     private String columnName;
 }
