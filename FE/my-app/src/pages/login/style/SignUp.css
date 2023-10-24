@@ -1,0 +1,17 @@
+@font-face {
+	font-family: 'omyu_pretty';
+	src: url('https://cdn.jsdelivr.net/gh/projectnoonnu/noonfonts_2304-01@1.0/omyu_pretty.woff2') format('woff2');
+	font-weight: normal;
+	font-style: normal;
+  }
+
+.gdgd {
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start; /* 위로 정렬 */
+    align-items: center;
+    height: 100vh; /* 높이를 화면 높이의 100%로 설정합니다. */
+    font-family: 'omyu_pretty', sans-serif;
+    
+}
+  
