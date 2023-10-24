@@ -1,5 +1,24 @@
 ## 가제: lol 전적 사이트 프로젝트
 
+<h2> 15GG 미리보기 </h2>
+<div>
+<img src ="./IMG/15gg 로고.png" width="300px">
+<img src ="./IMG/화면캡쳐.png" width="470px">
+</div>
+<div>
+	<ul>
+		<li>
+			League of Legend의 전적 검색 및 인게임 셋팅 정보 제공 사이트
+		</li>
+		<li>
+			로그인시 사용 가능한 개인 위젯으로 정보 접근성 향상
+		</li>
+		<li>
+			쉽고 빠르고 정확하다!
+		</li>
+	</ul>
+</div>
+
 <h2>기여자 (Collaborator) ✨</h2>
 <table align="center">
   <tr>
@@ -124,3 +143,11 @@
 [발표 자료 보러가기](./IMG/Final_Project_ppt_복사본.pdf)
 
 [발표 영상 보러가기](https://www.youtube.com/watch?v=qtjvRxQwo7I)
+
+<h1>프로젝트 내용</h1>
+
+[1.FrontEnd](https://github.com/chan9511/front)
+
+[2.BackEnd](https://github.com/Hoonscucci/FinalProjectBackEnd)
+
+[3.DataBase](https://github.com/SilverWithA)
