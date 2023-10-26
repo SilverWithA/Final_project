@@ -150,4 +150,4 @@
 
 [2.BackEnd](https://github.com/Hoonscucci/FinalProjectBackEnd)
 
-[3.DataBase](https://github.com/SilverWithA/Final_project/tree/main/Data_collecting)
+[3.DataBase] - Data collecting(https://github.com/SilverWithA/Final_project/tree/main/Data_collecting)
