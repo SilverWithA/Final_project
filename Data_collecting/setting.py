@@ -1,6 +1,6 @@
 from db_functions import *
 # product api 키 저장
-api_key = "RGAPI-82d303c3-356f-4cbe-83b6-6ac2ca16567c"
+# api_key = ""
 
 # lowCase_tier
 lowCase = ["chall","grand","mast",
