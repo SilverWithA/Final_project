@@ -2,7 +2,7 @@ import threading
 import requests
 import time
 
-api_key = "RGAPI-82d303c3-356f-4cbe-83b6-6ac2ca16567c"
+api_key = ""
 
 # 데이터를 저장할 리스트
 result_data = []
