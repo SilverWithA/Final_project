@@ -3,7 +3,7 @@ import pandas as pd
 import time
 from datetime import datetime, timedelta
 
-api_key = ""
+api_key = "RGAPI-82d303c3-356f-4cbe-83b6-6ac2ca16567c"
 current_time = datetime.utcnow()
 
 # 1. 티어별 닉네임 조회
